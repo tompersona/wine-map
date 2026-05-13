@@ -329,8 +329,7 @@
 
 <aside class="sidebar">
   <div class="masthead">
-    <div class="eyebrow">Lay &amp; Wheeler · In Bond</div>
-    <h1>The <em>Cellar</em></h1>
+<h1>The <em>Cellar</em></h1>
     <div class="subtitle">A geography of bottles, kept against time.</div>
   </div>
 
@@ -362,52 +361,26 @@
  * Coordinates are approximate — winery, estate, or village/appellation centre.
  * Edit freely. Country is shown in the sidebar; region is shown in the popup.
  */
-const PRODUCERS = {
-  "Agrapart & Fils":           { lat: 48.9722, lng: 4.0101,   region: "Avize, Champagne",            country: "France" },
-  "Antinori":                  { lat: 43.5106, lng: 11.2178,  region: "Bargino, Tuscany",            country: "Italy" },
-  "Bodegas Aalto":             { lat: 41.6235, lng: -4.2569,  region: "Quintanilla de Arriba, Ribera del Duero", country: "Spain" },
-  "Chateau Musar":             { lat: 34.0163, lng: 35.6699,  region: "Ghazir, Bekaa Valley",         country: "Lebanon" },
-  "Château Labégorce-Zédé":    { lat: 45.0501, lng: -0.6879,  region: "Margaux, Bordeaux",            country: "France" },
-  "Château Lafleur":           { lat: 44.9243, lng: -0.2114,  region: "Pomerol, Bordeaux",            country: "France" },
-  "Château Lamothe-Guignard":  { lat: 44.5332, lng: -0.3499,  region: "Sauternes, Bordeaux",          country: "France" },
-  "Château Latour":            { lat: 45.1759, lng: -0.7446,  region: "Pauillac, Bordeaux",           country: "France" },
-  "Château Rauzan-Ségla":      { lat: 45.0397, lng: -0.6694,  region: "Margaux, Bordeaux",            country: "France" },
-  "Château d'Yquem":           { lat: 44.5350, lng: -0.3169,  region: "Sauternes, Bordeaux",          country: "France" },
-  "Clos l'Eglise":             { lat: 44.9275, lng: -0.2008,  region: "Pomerol, Bordeaux",            country: "France" },
-  "Domaine Bruno Clair":       { lat: 47.2461, lng: 4.9583,   region: "Marsannay, Côte de Nuits",     country: "France" },
-  "Domaine Courbis":           { lat: 44.9963, lng: 4.8419,   region: "Châteaubourg, Northern Rhône",  country: "France" },
-  "Domaine Taupenot-Merme":    { lat: 47.1980, lng: 4.9620,   region: "Morey-Saint-Denis, Côte de Nuits", country: "France" },
-  "Domaine de l'Arlot":        { lat: 47.1096, lng: 4.9291,   region: "Prémeaux, Côte de Nuits",       country: "France" },
-  "Domaine de la Côte":        { lat: 34.6745, lng: -120.4442,region: "Sta. Rita Hills, California",  country: "USA" },
-  "Domaine de la Taille aux Loups": { lat: 47.3906, lng: 0.8832, region: "Montlouis-sur-Loire",      country: "France" },
-  "Frescobaldi":               { lat: 43.7711, lng: 11.2486,  region: "Florence, Tuscany",            country: "Italy" },
-  "Giuseppe Mascarello":       { lat: 44.5710, lng: 7.9174,   region: "Monchiero, Piedmont",          country: "Italy" },
-  "Grosset":                   { lat: -33.8500, lng: 138.6167,region: "Clare Valley, South Australia",country: "Australia" },
-  "Henri Gouges":              { lat: 47.1397, lng: 4.9533,   region: "Nuits-Saint-Georges, Côte de Nuits", country: "France" },
-  "Klein Constantia":          { lat: -34.0322, lng: 18.4156, region: "Constantia, Western Cape",     country: "South Africa" },
-  "Littorai":                  { lat: 38.4108, lng: -122.8669,region: "Sebastopol, Sonoma County",    country: "USA" },
-  "Marc Sorrel":               { lat: 45.0695, lng: 4.8409,   region: "Tain-l'Hermitage, Northern Rhône", country: "France" },
-  "Nicolas-Jay":               { lat: 45.3017, lng: -123.0585,region: "Yamhill-Carlton, Willamette Valley", country: "USA" },
-  "Penfolds":                  { lat: -34.8642, lng: 138.7233,region: "Magill, South Australia",      country: "Australia" },
-  "Quinta do Noval":           { lat: 41.1856, lng: -7.5358,  region: "Pinhão, Douro Valley",         country: "Portugal" },
-  "Rhys":                      { lat: 37.2272, lng: -122.0817,region: "Santa Cruz Mountains, California", country: "USA" },
-  "Rhys Vineyards":            { lat: 37.2272, lng: -122.0817,region: "Santa Cruz Mountains, California", country: "USA" },
-  "Salon":                     { lat: 48.9181, lng: 3.9764,   region: "Le Mesnil-sur-Oger, Champagne",country: "France" },
-  "Te Mata":                   { lat: -39.6539, lng: 176.9197,region: "Hawke's Bay",                  country: "New Zealand" },
-  "Tyrrell's":                 { lat: -32.7989, lng: 151.2867,region: "Hunter Valley, New South Wales", country: "Australia" },
-  "Vega Sicilia":              { lat: 41.6293, lng: -4.2938,  region: "Valbuena de Duero, Ribera del Duero", country: "Spain" }
-};
+let PRODUCERS = {};
 
-/* ---------- Load CSV and render ---------- */
-Papa.parse('cellar.csv', {
-  download: true,
-  header: true,
-  skipEmptyLines: true,
-  complete: (results) => render(results.data),
-  error: (err) => {
-    document.getElementById('loading').textContent = 'Could not load cellar.csv — serve via local web server.';
-    console.error(err);
-  }
+/* ---------- Load data and render ---------- */
+Promise.all([
+  fetch('producers.json').then(r => r.json()),
+  new Promise((resolve, reject) => {
+    Papa.parse('cellar.csv', {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => resolve(results.data),
+      error: reject
+    });
+  })
+]).then(([producers, rows]) => {
+  PRODUCERS = producers;
+  render(rows);
+}).catch(err => {
+  document.getElementById('loading').textContent = 'Could not load data — serve via local web server.';
+  console.error(err);
 });
 
 function render(rows) {
