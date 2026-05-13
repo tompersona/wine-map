@@ -344,6 +344,16 @@
     <ul class="region-list" id="region-list"></ul>
   </div>
 
+  <div>
+    <div class="section-title">By Type</div>
+    <ul class="region-list" id="type-list"></ul>
+  </div>
+
+  <div>
+    <div class="section-title">By Grape</div>
+    <ul class="region-list" id="grape-list"></ul>
+  </div>
+
   <div class="footer-note">
     Click any marker to inspect the holdings at that domaine. Coordinates are approximate — village or estate, not the cellar door itself.
   </div>
@@ -455,6 +465,21 @@ function render(rows) {
 
   if (bounds.length) map.fitBounds(bounds, { padding: [60, 60] });
 
+  // Type and grape stats from all rows
+  const typeStats = {};
+  const grapeStats = {};
+  rows.forEach(r => {
+    const qty = parseInt(r.Quantity) || 0;
+    if (r.Type) {
+      const t = r.Type.trim();
+      typeStats[t] = (typeStats[t] || 0) + qty;
+    }
+    if (r.Grapes) {
+      const grapes = r.Grapes.split(' / ').map(g => g.trim()).filter(Boolean);
+      grapes.forEach(g => { grapeStats[g] = (grapeStats[g] || 0) + qty; });
+    }
+  });
+
   // Sidebar stats
   document.getElementById('stat-producers').textContent = Object.keys(grouped).length;
   document.getElementById('stat-wines').textContent = totalWines;
@@ -468,6 +493,19 @@ function render(rows) {
   list.innerHTML = sorted.map(([c, n]) =>
     `<li><span class="country">${c}</span><span class="bottles">${n} btl</span></li>`
   ).join('');
+
+  // Type list, in logical order
+  const typeOrder = ['Red', 'White', 'Sparkling', 'Dessert', 'Fortified'];
+  document.getElementById('type-list').innerHTML = typeOrder
+    .filter(t => typeStats[t])
+    .map(t => `<li><span class="country">${t}</span><span class="bottles">${Math.round(typeStats[t])} btl</span></li>`)
+    .join('');
+
+  // Grape list, sorted by bottle count
+  document.getElementById('grape-list').innerHTML = Object.entries(grapeStats)
+    .sort((a, b) => b[1] - a[1])
+    .map(([g, n]) => `<li><span class="country">${escapeHtml(g)}</span><span class="bottles">${n} btl</span></li>`)
+    .join('');
 
   document.getElementById('loading').style.display = 'none';
 
