@@ -171,6 +171,75 @@
     letter-spacing: 0.05em;
   }
 
+  .vintage-timeline {
+    border-left: 1px solid var(--line);
+    margin-left: 6px;
+    padding-left: 14px;
+  }
+
+  .vintage-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 22px;
+    gap: 6px;
+    align-items: center;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    position: relative;
+    padding: 3px 0;
+  }
+
+  .vintage-row::before {
+    content: '';
+    position: absolute;
+    left: -19px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.65;
+  }
+
+  .vintage-row.gap {
+    padding: 1px 0;
+  }
+
+  .vintage-row.gap::before {
+    width: 4px;
+    height: 4px;
+    left: -17px;
+    background: var(--line);
+    opacity: 1;
+  }
+
+  .vintage-year {
+    text-align: right;
+    color: var(--ink-soft);
+  }
+
+  .vintage-row.gap .vintage-year {
+    color: var(--line);
+    font-size: 10px;
+  }
+
+  .vintage-bar-wrap {
+    height: 5px;
+    border-radius: 3px;
+  }
+
+  .vintage-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    opacity: 0.65;
+  }
+
+  .vintage-count {
+    color: var(--gold);
+    text-align: right;
+  }
+
   .footer-note {
     margin-top: auto;
     font-size: 10px;
@@ -350,6 +419,11 @@
   </div>
 
   <div>
+    <div class="section-title">By Vintage</div>
+    <div class="vintage-timeline" id="vintage-chart"></div>
+  </div>
+
+  <div>
     <div class="section-title">By Grape</div>
     <ul class="region-list" id="grape-list"></ul>
   </div>
@@ -465,9 +539,10 @@ function render(rows) {
 
   if (bounds.length) map.fitBounds(bounds, { padding: [60, 60] });
 
-  // Type and grape stats from all rows
+  // Type, grape, and vintage stats from all rows
   const typeStats = {};
   const grapeStats = {};
+  const vintageStats = {};
   rows.forEach(r => {
     const qty = parseInt(r.Quantity) || 0;
     if (r.Type) {
@@ -477,6 +552,10 @@ function render(rows) {
     if (r.Grapes) {
       const grapes = r.Grapes.split(' / ').map(g => g.trim()).filter(Boolean);
       grapes.forEach(g => { grapeStats[g] = (grapeStats[g] || 0) + qty; });
+    }
+    const v = r.Vintage?.trim();
+    if (v && v !== 'NV') {
+      vintageStats[v] = (vintageStats[v] || 0) + qty;
     }
   });
 
@@ -500,6 +579,23 @@ function render(rows) {
     .filter(t => typeStats[t])
     .map(t => `<li><span class="country">${t}</span><span class="bottles">${Math.round(typeStats[t])} btl</span></li>`)
     .join('');
+
+  // Vintage timeline — every year from min to max, gaps shown faintly
+  const vintageYears = Object.keys(vintageStats).map(Number);
+  const minYear = Math.min(...vintageYears);
+  const maxYear = Math.max(...vintageYears);
+  const maxVintage = Math.max(...Object.values(vintageStats));
+  let vintageHtml = '';
+  for (let y = minYear; y <= maxYear; y++) {
+    const n = vintageStats[y] || 0;
+    const gap = n === 0;
+    vintageHtml += `<div class="vintage-row${gap ? ' gap' : ''}">
+      <span class="vintage-year">${y}</span>
+      <div class="vintage-bar-wrap"><div class="vintage-bar" style="width:${gap ? 0 : Math.round(n / maxVintage * 100)}%"></div></div>
+      <span class="vintage-count">${gap ? '' : n}</span>
+    </div>`;
+  }
+  document.getElementById('vintage-chart').innerHTML = vintageHtml;
 
   // Grape list, sorted by bottle count
   document.getElementById('grape-list').innerHTML = Object.entries(grapeStats)
