@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cellar Map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #f5f1ea;
+    --paper: #faf7f1;
+    --ink: #1a1612;
+    --ink-soft: #4a423a;
+    --accent: #7a1f1f;        /* claret */
+    --accent-soft: #a04545;
+    --line: #d6cdbf;
+    --gold: #8a6f3c;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+  }
+
+  body {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    grid-template-rows: 100vh;
+  }
+
+  /* ===== Sidebar ===== */
+  .sidebar {
+    background: var(--paper);
+    border-right: 1px solid var(--line);
+    padding: 32px 28px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .masthead {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px;
+  }
+
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 38px;
+    line-height: 1.0;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+  }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .stat {
+    padding: 12px 4px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.4);
+  }
+
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-lbl {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  /* Region list */
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .section-title .count {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+  }
+
+  .region-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+  }
+
+  .region-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dotted var(--line);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+
+  .region-list li:hover {
+    color: var(--accent);
+  }
+
+  .region-list .country {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .region-list .bottles {
+    font-variant-numeric: tabular-nums;
+    color: var(--gold);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  .footer-note {
+    margin-top: auto;
+    font-size: 10px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+  }
+
+  /* ===== Map ===== */
+  #map {
+    height: 100vh;
+    width: 100%;
+    background: #e8e2d4;
+  }
+
+  /* Custom marker */
+  .wine-marker {
+    background: var(--accent);
+    border: 2px solid var(--paper);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--paper);
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    transition: transform 0.15s ease;
+  }
+
+  .wine-marker:hover {
+    transform: scale(1.1);
+  }
+
+  /* ===== Popups ===== */
+  .leaflet-popup-content-wrapper {
+    background: var(--paper);
+    border-radius: 0;
+    box-shadow: 0 4px 24px rgba(26,22,18,0.15);
+    border: 1px solid var(--line);
+    padding: 0;
+  }
+
+  .leaflet-popup-content {
+    margin: 0;
+    padding: 0;
+    width: 280px !important;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .leaflet-popup-tip {
+    background: var(--paper);
+    border: 1px solid var(--line);
+  }
+
+  .leaflet-popup-close-button {
+    color: var(--ink-soft) !important;
+    font-size: 20px !important;
+    padding: 2px 10px 8px !important;
+    right: 8px !important;
+    top: 4px !important;
+  }
+
+  .popup-inner {
+    padding: 18px 20px 16px;
+  }
+
+  .popup-region {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .popup-producer {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    color: var(--accent);
+    letter-spacing: -0.005em;
+  }
+
+  .popup-wines {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .popup-wine {
+    padding: 10px 0 8px;
+    border-bottom: 1px dotted var(--line);
+  }
+
+  .popup-wine:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .popup-wine-name {
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.35;
+    font-weight: 400;
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+  }
+
+  .popup-wine-meta {
+    margin-top: 3px;
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.08em;
+    display: flex;
+    gap: 12px;
+  }
+
+  .popup-wine-meta .vintage { color: var(--ink); font-weight: 500; }
+  .popup-wine-meta .qty { color: var(--gold); }
+
+  .loading {
+    position: absolute;
+    top: 50%; left: calc(50% + 170px);
+    transform: translate(-50%, -50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 18px;
+  }
+
+  /* Attribution */
+  .leaflet-control-attribution {
+    background: rgba(250,247,241,0.85) !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px !important;
+    color: var(--ink-soft) !important;
+  }
+
+  .leaflet-control-attribution a {
+    color: var(--accent) !important;
+  }
+
+  @media (max-width: 800px) {
+    body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+    .sidebar { max-height: 40vh; }
+    #map { height: 60vh; }
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="masthead">
+    <div class="eyebrow">Lay &amp; Wheeler · In Bond</div>
+    <h1>The <em>Cellar</em></h1>
+    <div class="subtitle">A geography of bottles, kept against time.</div>
+  </div>
+
+  <div class="stats" id="stats">
+    <div class="stat"><div class="stat-num" id="stat-producers">—</div><div class="stat-lbl">Producers</div></div>
+    <div class="stat"><div class="stat-num" id="stat-wines">—</div><div class="stat-lbl">Wines</div></div>
+    <div class="stat"><div class="stat-num" id="stat-bottles">—</div><div class="stat-lbl">Bottles</div></div>
+  </div>
+
+  <div>
+    <div class="section-title">By Country <span class="count" id="country-count"></span></div>
+    <ul class="region-list" id="region-list"></ul>
+  </div>
+
+  <div class="footer-note">
+    Click any marker to inspect the holdings at that domaine. Coordinates are approximate — village or estate, not the cellar door itself.
+  </div>
+</aside>
+
+<div id="map"></div>
+<div class="loading" id="loading">Decanting the cellar…</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+<script>
+/* ---------- Producer geocodes ----------
+ * Coordinates are approximate — winery, estate, or village/appellation centre.
+ * Edit freely. Country is shown in the sidebar; region is shown in the popup.
+ */
+const PRODUCERS = {
+  "Agrapart & Fils":           { lat: 48.9722, lng: 4.0101,   region: "Avize, Champagne",            country: "France" },
+  "Antinori":                  { lat: 43.5106, lng: 11.2178,  region: "Bargino, Tuscany",            country: "Italy" },
+  "Bodegas Aalto":             { lat: 41.6235, lng: -4.2569,  region: "Quintanilla de Arriba, Ribera del Duero", country: "Spain" },
+  "Chateau Musar":             { lat: 34.0163, lng: 35.6699,  region: "Ghazir, Bekaa Valley",         country: "Lebanon" },
+  "Château Labégorce-Zédé":    { lat: 45.0501, lng: -0.6879,  region: "Margaux, Bordeaux",            country: "France" },
+  "Château Lafleur":           { lat: 44.9243, lng: -0.2114,  region: "Pomerol, Bordeaux",            country: "France" },
+  "Château Lamothe-Guignard":  { lat: 44.5332, lng: -0.3499,  region: "Sauternes, Bordeaux",          country: "France" },
+  "Château Latour":            { lat: 45.1759, lng: -0.7446,  region: "Pauillac, Bordeaux",           country: "France" },
+  "Château Rauzan-Ségla":      { lat: 45.0397, lng: -0.6694,  region: "Margaux, Bordeaux",            country: "France" },
+  "Château d'Yquem":           { lat: 44.5350, lng: -0.3169,  region: "Sauternes, Bordeaux",          country: "France" },
+  "Clos l'Eglise":             { lat: 44.9275, lng: -0.2008,  region: "Pomerol, Bordeaux",            country: "France" },
+  "Domaine Bruno Clair":       { lat: 47.2461, lng: 4.9583,   region: "Marsannay, Côte de Nuits",     country: "France" },
+  "Domaine Courbis":           { lat: 44.9963, lng: 4.8419,   region: "Châteaubourg, Northern Rhône",  country: "France" },
+  "Domaine Taupenot-Merme":    { lat: 47.1980, lng: 4.9620,   region: "Morey-Saint-Denis, Côte de Nuits", country: "France" },
+  "Domaine de l'Arlot":        { lat: 47.1096, lng: 4.9291,   region: "Prémeaux, Côte de Nuits",       country: "France" },
+  "Domaine de la Côte":        { lat: 34.6745, lng: -120.4442,region: "Sta. Rita Hills, California",  country: "USA" },
+  "Domaine de la Taille aux Loups": { lat: 47.3906, lng: 0.8832, region: "Montlouis-sur-Loire",      country: "France" },
+  "Frescobaldi":               { lat: 43.7711, lng: 11.2486,  region: "Florence, Tuscany",            country: "Italy" },
+  "Giuseppe Mascarello":       { lat: 44.5710, lng: 7.9174,   region: "Monchiero, Piedmont",          country: "Italy" },
+  "Grosset":                   { lat: -33.8500, lng: 138.6167,region: "Clare Valley, South Australia",country: "Australia" },
+  "Henri Gouges":              { lat: 47.1397, lng: 4.9533,   region: "Nuits-Saint-Georges, Côte de Nuits", country: "France" },
+  "Klein Constantia":          { lat: -34.0322, lng: 18.4156, region: "Constantia, Western Cape",     country: "South Africa" },
+  "Littorai":                  { lat: 38.4108, lng: -122.8669,region: "Sebastopol, Sonoma County",    country: "USA" },
+  "Marc Sorrel":               { lat: 45.0695, lng: 4.8409,   region: "Tain-l'Hermitage, Northern Rhône", country: "France" },
+  "Nicolas-Jay":               { lat: 45.3017, lng: -123.0585,region: "Yamhill-Carlton, Willamette Valley", country: "USA" },
+  "Penfolds":                  { lat: -34.8642, lng: 138.7233,region: "Magill, South Australia",      country: "Australia" },
+  "Quinta do Noval":           { lat: 41.1856, lng: -7.5358,  region: "Pinhão, Douro Valley",         country: "Portugal" },
+  "Rhys":                      { lat: 37.2272, lng: -122.0817,region: "Santa Cruz Mountains, California", country: "USA" },
+  "Rhys Vineyards":            { lat: 37.2272, lng: -122.0817,region: "Santa Cruz Mountains, California", country: "USA" },
+  "Salon":                     { lat: 48.9181, lng: 3.9764,   region: "Le Mesnil-sur-Oger, Champagne",country: "France" },
+  "Te Mata":                   { lat: -39.6539, lng: 176.9197,region: "Hawke's Bay",                  country: "New Zealand" },
+  "Tyrrell's":                 { lat: -32.7989, lng: 151.2867,region: "Hunter Valley, New South Wales", country: "Australia" },
+  "Vega Sicilia":              { lat: 41.6293, lng: -4.2938,  region: "Valbuena de Duero, Ribera del Duero", country: "Spain" }
+};
+
+/* ---------- Load CSV and render ---------- */
+Papa.parse('cellar.csv', {
+  download: true,
+  header: true,
+  skipEmptyLines: true,
+  complete: (results) => render(results.data),
+  error: (err) => {
+    document.getElementById('loading').textContent = 'Could not load cellar.csv — serve via local web server.';
+    console.error(err);
+  }
+});
+
+function render(rows) {
+  // Group by producer
+  const grouped = {};
+  let missing = [];
+
+  rows.forEach(r => {
+    const p = r.Producer?.trim();
+    if (!p) return;
+    if (!grouped[p]) grouped[p] = [];
+    grouped[p].push(r);
+  });
+
+  // Merge "Rhys" and "Rhys Vineyards" into one pin
+  if (grouped["Rhys Vineyards"] && grouped["Rhys"]) {
+    grouped["Rhys"] = grouped["Rhys"].concat(grouped["Rhys Vineyards"]);
+    delete grouped["Rhys Vineyards"];
+  }
+
+  // Build map
+  const map = L.map('map', {
+    center: [44.5, 6],
+    zoom: 4,
+    zoomControl: true,
+    worldCopyJump: true
+  });
+
+  // CARTO Voyager — warm, low-key, no key required
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  const bounds = [];
+  let totalWines = 0;
+  let totalBottles = 0;
+  const countryStats = {};
+
+  Object.entries(grouped).forEach(([producer, wines]) => {
+    const geo = PRODUCERS[producer];
+    if (!geo) {
+      missing.push(producer);
+      return;
+    }
+
+    const bottleCount = wines.reduce((s, w) => s + (parseInt(w.Quantity) || 0), 0);
+    totalWines += wines.length;
+    totalBottles += bottleCount;
+
+    countryStats[geo.country] = (countryStats[geo.country] || 0) + bottleCount;
+
+    // Marker size scales gently with bottle count
+    const size = Math.min(38, 20 + Math.sqrt(bottleCount) * 2.5);
+
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="wine-marker" style="width:${size}px;height:${size}px;font-size:${Math.max(10, size*0.35)}px">${bottleCount}</div>`,
+      iconSize: [size, size],
+      iconAnchor: [size/2, size/2]
+    });
+
+    const popupHtml = buildPopup(producer, wines, geo);
+
+    L.marker([geo.lat, geo.lng], { icon })
+      .addTo(map)
+      .bindPopup(popupHtml, { maxWidth: 300, minWidth: 280 });
+
+    bounds.push([geo.lat, geo.lng]);
+  });
+
+  if (bounds.length) map.fitBounds(bounds, { padding: [60, 60] });
+
+  // Sidebar stats
+  document.getElementById('stat-producers').textContent = Object.keys(grouped).length;
+  document.getElementById('stat-wines').textContent = totalWines;
+  document.getElementById('stat-bottles').textContent = totalBottles;
+
+  // Country list, sorted by bottle count
+  const sorted = Object.entries(countryStats).sort((a, b) => b[1] - a[1]);
+  document.getElementById('country-count').textContent = sorted.length + ' countries';
+
+  const list = document.getElementById('region-list');
+  list.innerHTML = sorted.map(([c, n]) =>
+    `<li><span class="country">${c}</span><span class="bottles">${n} btl</span></li>`
+  ).join('');
+
+  document.getElementById('loading').style.display = 'none';
+
+  if (missing.length) {
+    console.warn('Producers without coordinates:', missing);
+  }
+}
+
+function buildPopup(producer, wines, geo) {
+  // Sort by vintage descending
+  const sorted = [...wines].sort((a, b) => (b.Vintage || 0) - (a.Vintage || 0));
+
+  const items = sorted.map(w => {
+    const fmt = parseFloat(w.Format_cl);
+    let fmtLabel = '';
+    if (fmt && fmt !== 75) fmtLabel = ` · ${fmt}cl`;
+    return `
+      <li class="popup-wine">
+        <div class="popup-wine-name">${escapeHtml(w.Wine)}</div>
+        <div class="popup-wine-meta">
+          <span class="vintage">${w.Vintage || 'NV'}</span>
+          <span class="qty">${w.Quantity} btl${fmtLabel}</span>
+        </div>
+      </li>`;
+  }).join('');
+
+  return `
+    <div class="popup-inner">
+      <div class="popup-region">${escapeHtml(geo.region)}</div>
+      <div class="popup-producer">${escapeHtml(producer)}</div>
+      <ul class="popup-wines">${items}</ul>
+    </div>`;
+}
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+</script>
+
+</body>
+</html>
