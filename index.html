@@ -387,6 +387,53 @@
     color: var(--accent) !important;
   }
 
+  .vintage-tooltip {
+    position: fixed;
+    z-index: 2000;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 12px 16px;
+    pointer-events: none;
+    display: none;
+    min-width: 240px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.13);
+  }
+
+  .vintage-tooltip.visible { display: block; }
+
+  .vintage-tooltip-year {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 7px;
+    margin-bottom: 8px;
+  }
+
+  .vintage-tooltip ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .vintage-tooltip li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 14px;
+    padding: 4px 0;
+    border-bottom: 1px dotted var(--line);
+    font-size: 12px;
+  }
+
+  .vintage-tooltip li:last-child { border-bottom: none; }
+
+  .tt-wine { color: var(--ink); flex: 1; }
+  .tt-producer { color: var(--ink-soft); font-size: 10px; margin-top: 1px; }
+  .tt-qty { color: var(--gold); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
   @media (max-width: 800px) {
     body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
     .sidebar { max-height: 40vh; }
@@ -435,6 +482,7 @@
 
 <div id="map"></div>
 <div class="loading" id="loading">Decanting the cellar…</div>
+<div class="vintage-tooltip" id="vintage-tooltip"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -543,6 +591,7 @@ function render(rows) {
   const typeStats = {};
   const grapeStats = {};
   const vintageStats = {};
+  const vintageWines = {};
   rows.forEach(r => {
     const qty = parseInt(r.Quantity) || 0;
     if (r.Type) {
@@ -556,6 +605,8 @@ function render(rows) {
     const v = r.Vintage?.trim();
     if (v && v !== 'NV') {
       vintageStats[v] = (vintageStats[v] || 0) + qty;
+      if (!vintageWines[v]) vintageWines[v] = [];
+      vintageWines[v].push(r);
     }
   });
 
@@ -589,13 +640,41 @@ function render(rows) {
   for (let y = minYear; y <= maxYear; y++) {
     const n = vintageStats[y] || 0;
     const gap = n === 0;
-    vintageHtml += `<div class="vintage-row${gap ? ' gap' : ''}">
+    vintageHtml += `<div class="vintage-row${gap ? ' gap' : ''}"${gap ? '' : ` data-year="${y}"`}>
       <span class="vintage-year">${y}</span>
       <div class="vintage-bar-wrap"><div class="vintage-bar" style="width:${gap ? 0 : Math.round(n / maxVintage * 100)}%"></div></div>
       <span class="vintage-count">${gap ? '' : n}</span>
     </div>`;
   }
-  document.getElementById('vintage-chart').innerHTML = vintageHtml;
+  const vintageChart = document.getElementById('vintage-chart');
+  vintageChart.innerHTML = vintageHtml;
+
+  // Vintage tooltip
+  const tooltip = document.getElementById('vintage-tooltip');
+  vintageChart.addEventListener('mouseover', e => {
+    const row = e.target.closest('[data-year]');
+    if (!row) return;
+    const year = row.dataset.year;
+    const wines = vintageWines[year] || [];
+    const items = wines.map(w => {
+      const fmt = parseFloat(w.Format_cl);
+      const fmtLabel = fmt && fmt !== 75 ? ` · ${fmt}cl` : '';
+      return `<li>
+        <div class="tt-wine">
+          ${escapeHtml(w.Wine)}
+          <div class="tt-producer">${escapeHtml(w.Producer)}</div>
+        </div>
+        <span class="tt-qty">${w.Quantity} btl${fmtLabel}</span>
+      </li>`;
+    }).join('');
+    tooltip.innerHTML = `<div class="vintage-tooltip-year">${year}</div><ul>${items}</ul>`;
+    const rect = row.getBoundingClientRect();
+    const top = Math.min(rect.top, window.innerHeight - tooltip.offsetHeight - 8);
+    tooltip.style.top = top + 'px';
+    tooltip.style.left = (rect.right + 12) + 'px';
+    tooltip.classList.add('visible');
+  });
+  vintageChart.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
 
   // Grape list, sorted by bottle count
   document.getElementById('grape-list').innerHTML = Object.entries(grapeStats)
