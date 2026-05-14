@@ -438,6 +438,16 @@
     body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
     .sidebar { max-height: 40vh; }
     #map { height: 60vh; }
+
+    .vintage-tooltip {
+      left: 8px !important;
+      right: 8px !important;
+      bottom: 8px !important;
+      top: auto !important;
+      min-width: unset;
+      max-height: 45vh;
+      overflow-y: auto;
+    }
   }
 </style>
 </head>
@@ -651,9 +661,8 @@ function render(rows) {
 
   // Vintage tooltip
   const tooltip = document.getElementById('vintage-tooltip');
-  vintageChart.addEventListener('mouseover', e => {
-    const row = e.target.closest('[data-year]');
-    if (!row) return;
+
+  function showVintageTooltip(row) {
     const year = row.dataset.year;
     const wines = vintageWines[year] || [];
     const items = wines.map(w => {
@@ -673,8 +682,24 @@ function render(rows) {
     tooltip.style.top = top + 'px';
     tooltip.style.left = (rect.right + 12) + 'px';
     tooltip.classList.add('visible');
+  }
+
+  // Mouse
+  vintageChart.addEventListener('mouseover', e => {
+    const row = e.target.closest('[data-year]');
+    if (row) showVintageTooltip(row);
   });
   vintageChart.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+
+  // Touch
+  vintageChart.addEventListener('touchstart', e => {
+    const row = e.target.closest('[data-year]');
+    if (!row) return;
+    showVintageTooltip(row);
+  }, { passive: true });
+  document.addEventListener('touchstart', e => {
+    if (!vintageChart.contains(e.target)) tooltip.classList.remove('visible');
+  }, { passive: true });
 
   // Grape list, sorted by bottle count
   document.getElementById('grape-list').innerHTML = Object.entries(grapeStats)
