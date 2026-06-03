@@ -365,6 +365,15 @@
   .popup-wine-meta .vintage { color: var(--ink); font-weight: 500; }
   .popup-wine-meta .qty { color: var(--gold); }
 
+  .popup-wine-grapes {
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+    font-style: italic;
+    opacity: 0.75;
+  }
+
   .loading {
     position: absolute;
     top: 50%; left: calc(50% + 170px);
@@ -722,6 +731,9 @@ function buildPopup(producer, wines, geo) {
     const fmt = parseFloat(w.Format_cl);
     let fmtLabel = '';
     if (fmt && fmt !== 75) fmtLabel = ` · ${fmt}cl`;
+    const grapeLine = w.Grapes
+      ? `<div class="popup-wine-grapes">${escapeHtml(w.Grapes)}</div>`
+      : '';
     return `
       <li class="popup-wine">
         <div class="popup-wine-name">${escapeHtml(w.Wine)}</div>
@@ -729,6 +741,7 @@ function buildPopup(producer, wines, geo) {
           <span class="vintage">${w.Vintage || 'NV'}</span>
           <span class="qty">${w.Quantity} btl${fmtLabel}</span>
         </div>
+        ${grapeLine}
       </li>`;
   }).join('');
 
