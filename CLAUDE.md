@@ -16,7 +16,7 @@ This is a single-file app: all HTML, CSS, and JavaScript live in `index.html`. T
 
 **Data source:** `cellar.csv` — columns are `Producer, Wine, Vintage, Quantity, Format_cl`. Parsed at runtime by PapaParse.
 
-**Mapping:** Leaflet 1.9.4 with CARTO Voyager tiles (no API key required). Markers are `L.divIcon` elements styled via `.wine-marker`.
+**Mapping:** Leaflet 1.9.4 with CARTO Voyager tiles. CARTO requires an API key: the production key (restricted to `tompersona.github.io`) is inline in `index.html`; for local dev, create a gitignored `config.local.js` containing `window.CARTO_LOCAL_KEY = '...';` with a key restricted to `localhost`/`127.0.0.1`. Markers are `L.divIcon` elements styled via `.wine-marker`.
 
 **Producer geocodes:** Hardcoded in the `PRODUCERS` object near the top of the `<script>` block (~line 365). Each entry has `lat`, `lng`, `region`, and `country`. Adding a new producer to `cellar.csv` requires a matching entry here or it will be silently skipped (logged to console as a warning).
 

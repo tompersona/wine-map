@@ -506,6 +506,8 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<!-- Optional, gitignored: sets window.CARTO_LOCAL_KEY for local dev (404s on GitHub Pages) -->
+<script src="config.local.js"></script>
 
 <script>
 /* ---------- Producer geocodes ----------
@@ -560,8 +562,13 @@ function render(rows) {
     worldCopyJump: true
   });
 
-  // CARTO Voyager — warm, low-key, no key required
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  // CARTO Voyager — warm, low-key. Free non-commercial key: https://carto.com/basemaps/apikey/
+  // Production key is restricted to tompersona.github.io; local dev key lives in config.local.js
+  const CARTO_API_KEY = location.hostname === 'tompersona.github.io'
+    ? 'cb1_4h6b_1_d31c3927a0dd51eff782f721'
+    : window.CARTO_LOCAL_KEY;
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key={key}', {
+    key: CARTO_API_KEY,
     attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
     subdomains: 'abcd',
     maxZoom: 19
