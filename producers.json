@@ -17,6 +17,13 @@
   "Domaine de la Côte":        { "lat": 34.6745, "lng": -120.4442, "region": "Sta. Rita Hills, California",               "country": "USA"          },
   "Domaine de la Taille aux Loups": { "lat": 47.3906, "lng": 0.8832, "region": "Montlouis-sur-Loire",                    "country": "France"       },
   "Frescobaldi":               { "lat": 43.7711, "lng": 11.2486,   "region": "Florence, Tuscany",                         "country": "Italy"        },
+  "Gaia Wines": {
+    "lat": 36.3911, "lng": 25.4859, "region": "Vrachies, Exo Gonia, Santorini", "country": "Greece",
+    "about": "Gaia was founded in 1994 by two agronomists, Yiannis Paraskevopoulos and Leon Karatsalos, with wineries in Nemea on the Peloponnese and on Santorini. Their first release was just 9,800 bottles of Thalassitis, a Santorini Assyrtiko that helped put the grape on the world map. The Santorini winery sits on the beach near Kamari, in a stone building where sun-dried tomatoes were processed a century ago. To test how Assyrtiko ages, they sank bottles of Thalassitis about 20 metres under the sea off the island and compared them with the same wine kept in the cellar. Gaia is now one of the names most associated with the revival of serious Greek wine.",
+    "wines": {
+      "Ammonite Assyrtiko": "Ammonite is Gaia's top Santorini white, a single-vineyard Assyrtiko from a plot called Thalassina at the highest point of Megalochori, around 200 metres above the sea. The vines are ungrafted and are said to have root systems more than three centuries old, because the phylloxera louse that wiped out Europe's vines never took hold in Santorini's volcanic soil. Rather than growing up posts, the vines are woven into low baskets called kouloura that sit on the ground, so the grapes hang inside, sheltered from the island's fierce winds. The wine spends 15 months on its lees, with a small portion in new French oak, and is named after Gaia's emblem, the fossilised sea creature called an ammonite."
+    }
+  },
   "Giuseppe Mascarello":       { "lat": 44.5710, "lng": 7.9174,    "region": "Monchiero, Piedmont",                       "country": "Italy"        },
   "Grosset":                   { "lat": -33.8500, "lng": 138.6167, "region": "Clare Valley, South Australia",             "country": "Australia"    },
   "Henri Gouges":              { "lat": 47.1397, "lng": 4.9533,    "region": "Nuits-Saint-Georges, Côte de Nuits",        "country": "France"       },
