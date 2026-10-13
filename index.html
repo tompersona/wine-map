@@ -443,6 +443,157 @@
   .tt-producer { color: var(--ink-soft); font-size: 10px; margin-top: 1px; }
   .tt-qty { color: var(--gold); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
+  /* ===== Popup "read more" link ===== */
+  .popup-more {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    cursor: pointer;
+  }
+
+  .popup-more:hover { color: var(--accent-soft); }
+
+  /* ===== Detail panel (slides over the sidebar) ===== */
+  .detail-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 340px;
+    height: 100vh;
+    z-index: 1100;
+    background: var(--paper);
+    border-right: 1px solid var(--line);
+    box-shadow: 4px 0 24px rgba(26, 22, 18, 0.08);
+    padding: 32px 28px 40px;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.28s ease, visibility 0s linear 0.28s;
+  }
+
+  .detail-panel.open {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.28s ease;
+  }
+
+  .detail-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: none;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+
+  .detail-close:hover { color: var(--accent); }
+
+  .detail-region {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+    padding-right: 32px;
+  }
+
+  .detail-producer {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.05;
+    margin: 0 0 16px;
+    color: var(--accent);
+  }
+
+  .detail-about {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--ink);
+    margin: 0 0 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .detail-wines {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .detail-wine {
+    padding: 0 0 22px;
+    margin-bottom: 22px;
+    border-bottom: 1px dotted var(--line);
+  }
+
+  .detail-wine:last-child { border-bottom: none; margin-bottom: 0; }
+
+  .detail-wine-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 21px;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .detail-wine-grapes {
+    margin-top: 3px;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    font-style: italic;
+    color: var(--ink-soft);
+    opacity: 0.75;
+  }
+
+  .detail-wine-holdings {
+    margin-top: 6px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+  }
+
+  .detail-wine-holdings .vintage { color: var(--ink); font-weight: 500; }
+  .detail-wine-holdings .qty { color: var(--gold); }
+
+  .detail-wine-note {
+    margin: 10px 0 0;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 800px) {
+    .detail-panel {
+      top: auto;
+      bottom: 0;
+      width: 100%;
+      height: auto;
+      max-height: 75vh;
+      border-right: none;
+      border-top: 1px solid var(--line);
+      box-shadow: 0 -4px 24px rgba(26, 22, 18, 0.12);
+      padding: 28px 20px calc(32px + env(safe-area-inset-bottom, 0px));
+      transform: translateY(100%);
+    }
+  }
+
   @media (max-width: 800px) {
     body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
     .sidebar { max-height: 40vh; }
@@ -502,6 +653,11 @@
 <div id="map"></div>
 <div class="loading" id="loading">Decanting the cellar…</div>
 <div class="vintage-tooltip" id="vintage-tooltip"></div>
+
+<section class="detail-panel" id="detail-panel" aria-label="Producer details">
+  <button class="detail-close" id="detail-close" aria-label="Close">&times;</button>
+  <div id="detail-content"></div>
+</section>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -612,6 +768,25 @@ function render(rows) {
   });
 
   if (bounds.length) map.fitBounds(bounds, { padding: [60, 60] });
+
+  // Detail panel: opened from the popup's "About" link
+  const panel = document.getElementById('detail-panel');
+  const closePanel = () => panel.classList.remove('open');
+
+  map.on('popupopen', e => {
+    const link = e.popup.getElement().querySelector('.popup-more');
+    if (!link) return;
+    link.addEventListener('click', () => {
+      const producer = link.dataset.producer;
+      document.getElementById('detail-content').innerHTML =
+        buildDetail(producer, grouped[producer], PRODUCERS[producer]);
+      map.closePopup();
+      panel.scrollTop = 0;
+      panel.classList.add('open');
+    });
+  });
+  document.getElementById('detail-close').addEventListener('click', closePanel);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
 
   // Type, grape, and vintage stats from all rows
   const typeStats = {};
@@ -757,7 +932,49 @@ function buildPopup(producer, wines, geo) {
       <div class="popup-region">${escapeHtml(geo.region)}</div>
       <div class="popup-producer">${escapeHtml(producer)}</div>
       <ul class="popup-wines">${items}</ul>
+      ${hasNotes(geo) ? `<button class="popup-more" data-producer="${escapeHtml(producer)}">About this producer &rarr;</button>` : ''}
     </div>`;
+}
+
+function hasNotes(geo) {
+  return Boolean(geo.about || (geo.wines && Object.keys(geo.wines).length));
+}
+
+function buildDetail(producer, wines, geo) {
+  // One entry per wine name, with every vintage held listed beneath it
+  const byName = {};
+  wines.forEach(w => {
+    if (!byName[w.Wine]) byName[w.Wine] = [];
+    byName[w.Wine].push(w);
+  });
+
+  const latest = list => Math.max(...list.map(w => parseInt(w.Vintage) || 0));
+  const entries = Object.entries(byName).sort((a, b) => latest(b[1]) - latest(a[1]));
+
+  const items = entries.map(([name, list]) => {
+    const holdings = [...list]
+      .sort((a, b) => (parseInt(b.Vintage) || 0) - (parseInt(a.Vintage) || 0))
+      .map(w => {
+        const fmt = parseFloat(w.Format_cl);
+        const fmtLabel = fmt && fmt !== 75 ? ` · ${fmt}cl` : '';
+        return `<span><span class="vintage">${escapeHtml(w.Vintage || 'NV')}</span> <span class="qty">${escapeHtml(w.Quantity)} btl${fmtLabel}</span></span>`;
+      }).join('');
+    const grapes = list[0].Grapes;
+    const note = geo.wines?.[name];
+    return `
+      <li class="detail-wine">
+        <div class="detail-wine-name">${escapeHtml(name)}</div>
+        ${grapes ? `<div class="detail-wine-grapes">${escapeHtml(grapes)}</div>` : ''}
+        <div class="detail-wine-holdings">${holdings}</div>
+        ${note ? `<p class="detail-wine-note">${escapeHtml(note)}</p>` : ''}
+      </li>`;
+  }).join('');
+
+  return `
+    <div class="detail-region">${escapeHtml(geo.region)}, ${escapeHtml(geo.country)}</div>
+    <h2 class="detail-producer">${escapeHtml(producer)}</h2>
+    ${geo.about ? `<p class="detail-about">${escapeHtml(geo.about)}</p>` : ''}
+    <ul class="detail-wines">${items}</ul>`;
 }
 
 function escapeHtml(s) {

@@ -31,5 +31,12 @@
   "Salon":                     { "lat": 48.9181, "lng": 3.9764,    "region": "Le Mesnil-sur-Oger, Champagne",             "country": "France"       },
   "Te Mata":                   { "lat": -39.6539, "lng": 176.9197, "region": "Hawke's Bay",                               "country": "New Zealand"  },
   "Tyrrell's":                 { "lat": -32.7989, "lng": 151.2867, "region": "Hunter Valley, New South Wales",            "country": "Australia"    },
-  "Vega Sicilia":              { "lat": 41.6293, "lng": -4.2938,   "region": "Valbuena de Duero, Ribera del Duero",       "country": "Spain"        }
+  "Vega Sicilia": {
+    "lat": 41.6293, "lng": -4.2938, "region": "Valbuena de Duero, Ribera del Duero", "country": "Spain",
+    "about": "Founded in 1864 in Valbuena de Duero, Vega Sicilia is Spain's most celebrated estate and the reason Ribera del Duero is famous at all. Its founder, Eloy Lecanda, planted Bordeaux varieties from France alongside the local Tinto Fino (Tempranillo), giving the wines a structure that set them apart. Despite the name, it has nothing to do with Sicily: the land was known as the \"Pago de la Vega Santa Cecilia,\" the meadow of Saint Cecilia, and the saint's name was worn down over time into \"Sicilia.\" The estate is known for very long ageing before release, and it was famous for over a century before the region won official appellation status in 1982. Owned by the Álvarez family since 1982, it remains a benchmark for age-worthy Spanish red.",
+    "wines": {
+      "Unico": "Unico is Vega Sicilia's flagship and one of the world's most sought-after reds, made mainly from Tinto Fino with a share of Cabernet Sauvignon. It is made only in years the estate judges worthy, and is skipped altogether in lesser vintages. It is typically released around a decade after the harvest, after years in barrels of different sizes and then a long rest in bottle, so a new release is usually already older than most wines ever get before they're opened. The result is a wine built to evolve for decades more in the cellar.",
+      "Valbuena 5°": "Valbuena is the estate's second red, from younger vines and a different blend that includes Merlot alongside Tinto Fino. The \"5°\" is a label you can read literally: it stands for quinto año, the fifth year, because the wine is released five years after harvest. It sees less time in barrel than Unico and is approachable much earlier, but it still ages gracefully. Many regard it as the best way into the Vega Sicilia style without the Unico price."
+    }
+  }
 }
