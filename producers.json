@@ -28,6 +28,13 @@
   "Grosset":                   { "lat": -33.8500, "lng": 138.6167, "region": "Clare Valley, South Australia",             "country": "Australia"    },
   "Henri Gouges":              { "lat": 47.1397, "lng": 4.9533,    "region": "Nuits-Saint-Georges, Côte de Nuits",        "country": "France"       },
   "Klein Constantia":          { "lat": -34.0322, "lng": 18.4156,  "region": "Constantia, Western Cape",                  "country": "South Africa" },
+  "Krug": {
+    "lat": 49.2609, "lng": 4.0365, "region": "Reims, Champagne", "country": "France",
+    "about": "Krug was founded in Reims in 1843 by Joseph Krug, a German-born winemaker from Mainz who had learned his trade at the Champagne house Jacquesson. His idea was radical for the time: to make the finest champagne every single year, whatever the weather, by blending wines from many plots and many vintages instead of relying on one good harvest. In 1848 he set out these principles in a notebook addressed to his six-year-old son, Paul, and the house still treats it as its founding text. Krug takes the comparison with music literally: through a project called Krug Echoes, it has commissioned composers to write pieces expressing how they perceive the taste of particular cuvées. Now part of LVMH, the house is still regarded as the benchmark for prestige champagne.",
+    "wines": {
+      "Grande Cuvée 174ème Édition": "Grande Cuvée is Krug's signature champagne, and the edition number counts how many times the blend has been recreated since Joseph Krug's first. The 174ème Édition is built around the 2018 harvest, but it combines 143 separate wines from ten different years, the oldest dating back to 2001. Reserve wines from the house's library make up 36% of the blend, which is 54% Pinot Noir, 29% Chardonnay and 17% Meunier. Every bottle carries a six-digit Krug iD on its back label, which you can look up online to read that bottle's own story, including its blend, when it was disgorged and suggestions for food and music to go with it."
+    }
+  },
   "Littorai":                  { "lat": 38.4108, "lng": -122.8669, "region": "Sebastopol, Sonoma County",                 "country": "USA"          },
   "Marc Sorrel":               { "lat": 45.0695, "lng": 4.8409,    "region": "Tain-l'Hermitage, Northern Rhône",          "country": "France"       },
   "Nicolas-Jay":               { "lat": 45.3017, "lng": -123.0585, "region": "Yamhill-Carlton, Willamette Valley",        "country": "USA"          },
