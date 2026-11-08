@@ -1,85 +1,174 @@
 {
-  "Agrapart & Fils":           { "lat": 48.9722, "lng": 4.0101,    "region": "Avize, Champagne",                          "country": "France"       },
-  "Antinori":                  { "lat": 43.5106, "lng": 11.2178,   "region": "Bargino, Tuscany",                          "country": "Italy"        },
-  "Bodegas Aalto":             { "lat": 41.6235, "lng": -4.2569,   "region": "Quintanilla de Arriba, Ribera del Duero",   "country": "Spain"        },
-  "Chateau Musar":             { "lat": 34.0163, "lng": 35.6699,   "region": "Ghazir, Bekaa Valley",                      "country": "Lebanon"      },
-  "Château Labégorce-Zédé":    { "lat": 45.0501, "lng": -0.6879,   "region": "Margaux, Bordeaux",                         "country": "France"       },
-  "Château Lafleur":           { "lat": 44.9243, "lng": -0.2114,   "region": "Pomerol, Bordeaux",                         "country": "France"       },
-  "Château Lamothe-Guignard":  { "lat": 44.5332, "lng": -0.3499,   "region": "Sauternes, Bordeaux",                       "country": "France"       },
-  "Château Latour":            { "lat": 45.1759, "lng": -0.7446,   "region": "Pauillac, Bordeaux",                        "country": "France"       },
-  "Château Rauzan-Ségla":      { "lat": 45.0397, "lng": -0.6694,   "region": "Margaux, Bordeaux",                         "country": "France"       },
-  "Château d'Yquem":           { "lat": 44.5350, "lng": -0.3169,   "region": "Sauternes, Bordeaux",                       "country": "France"       },
-  "Clos l'Eglise":             { "lat": 44.9275, "lng": -0.2008,   "region": "Pomerol, Bordeaux",                         "country": "France"       },
-  "Domaine Bruno Clair":       { "lat": 47.2461, "lng": 4.9583,    "region": "Marsannay, Côte de Nuits",                  "country": "France"       },
-  "Domaine Courbis":           { "lat": 44.9963, "lng": 4.8419,    "region": "Châteaubourg, Northern Rhône",               "country": "France"       },
-  "Domaine Taupenot-Merme":    { "lat": 47.1980, "lng": 4.9620,    "region": "Morey-Saint-Denis, Côte de Nuits",          "country": "France"       },
-  "Domaine de l'Arlot":        { "lat": 47.1096, "lng": 4.9291,    "region": "Prémeaux, Côte de Nuits",                   "country": "France"       },
+  "Agrapart & Fils": {
+    "lat": 48.9722, "lng": 4.0101,
+    "village": "Avize", "subregion": "Côte des Blancs", "region": "Champagne", "country": "France"
+  },
+  "Antinori": {
+    "lat": 43.5106, "lng": 11.2178,
+    "village": "Bargino", "subregion": "Chianti Classico", "region": "Tuscany", "country": "Italy"
+  },
+  "Bodegas Aalto": {
+    "lat": 41.6235, "lng": -4.2569,
+    "village": "Quintanilla de Arriba", "region": "Ribera del Duero", "country": "Spain"
+  },
+  "Chateau Musar": {
+    "lat": 33.6921, "lng": 35.7566,
+    "region": "Bekaa Valley", "country": "Lebanon"
+  },
+  "Château Labégorce-Zédé": {
+    "lat": 45.0501, "lng": -0.6879,
+    "village": "Margaux", "subregion": "Left Bank", "region": "Bordeaux", "country": "France"
+  },
+  "Château Lafleur": {
+    "lat": 44.9243, "lng": -0.2114,
+    "village": "Pomerol", "subregion": "Right Bank", "region": "Bordeaux", "country": "France"
+  },
+  "Château Lamothe-Guignard": {
+    "lat": 44.5332, "lng": -0.3499,
+    "village": "Sauternes", "subregion": "Left Bank", "region": "Bordeaux", "country": "France"
+  },
+  "Château Latour": {
+    "lat": 45.1759, "lng": -0.7446,
+    "village": "Pauillac", "subregion": "Left Bank", "region": "Bordeaux", "country": "France"
+  },
+  "Château Rauzan-Ségla": {
+    "lat": 45.0397, "lng": -0.6694,
+    "village": "Margaux", "subregion": "Left Bank", "region": "Bordeaux", "country": "France"
+  },
+  "Château d'Yquem": {
+    "lat": 44.535, "lng": -0.3169,
+    "village": "Sauternes", "subregion": "Left Bank", "region": "Bordeaux", "country": "France"
+  },
+  "Clos l'Eglise": {
+    "lat": 44.9275, "lng": -0.2008,
+    "village": "Pomerol", "subregion": "Right Bank", "region": "Bordeaux", "country": "France"
+  },
+  "Domaine Bruno Clair": {
+    "lat": 47.2461, "lng": 4.9583,
+    "village": "Marsannay-la-Côte", "subregion": "Côte de Nuits", "region": "Burgundy", "country": "France"
+  },
+  "Domaine Courbis": {
+    "lat": 44.9963, "lng": 4.8419,
+    "village": "Châteaubourg", "subregion": "Northern Rhône", "region": "Rhône", "country": "France"
+  },
+  "Domaine Taupenot-Merme": {
+    "lat": 47.198, "lng": 4.962,
+    "village": "Morey-Saint-Denis", "subregion": "Côte de Nuits", "region": "Burgundy", "country": "France"
+  },
+  "Domaine de l'Arlot": {
+    "lat": 47.1096, "lng": 4.9291,
+    "village": "Prémeaux-Prissey", "subregion": "Côte de Nuits", "region": "Burgundy", "country": "France"
+  },
   "Domaine de la Côte": {
-    "lat": 34.6745, "lng": -120.4442, "region": "Sta. Rita Hills, California", "country": "USA",
+    "lat": 34.6745, "lng": -120.4442,
+    "village": "Lompoc", "subregion": "Sta. Rita Hills", "region": "Santa Barbara County", "country": "USA",
     "about": "Domaine de la Côte sits on the far western edge of the Sta. Rita Hills, about seven miles from the Pacific, on vineyards first planted in 2007 by Sashi Moorman for the ambitious Evening Land project. In 2013 Moorman and the celebrated sommelier Rajat Parr took charge of the vineyards, and the estate quickly became one of California's most talked-about Pinot Noir producers, with Burgundy as its stated guide. The vines are planted at around 10,000 per hectare, roughly double the usual density for California Pinot, and the wines are typically fermented with whole bunches. They also favour a type of Pinot Noir called Pinot Droit, whose shoots grow straight up rather than sprawling, which Moorman credits with adding elegance to the wines. The founding partners went their separate ways in 2025, and Moorman continues to run the estate.",
     "wines": {
       "Bloom's Field Pinot Noir": "Bloom's Field is the estate's westernmost parcel, 7.5 acres on a southwest-facing hillside that takes the full force of the wind coming off the Pacific. Its clay topsoils grow lighter in colour and texture as the vineyard climbs, over a bedrock of Monterey shale. Instead of planting one type of Pinot Noir per block, the vineyard alternates rows of three historic Californian selections, named after the pioneering estates Calera, Swan and Mount Eden, so the wine is a field blend of the state's Pinot heritage. It is usually the most savoury of the estate's wines, often described in terms of iodine and seaweed.",
       "La Côte Pinot Noir": "La Côte is the vineyard that gave the estate its name, 9.5 acres on a steep southeast-facing hillside on the sheltered, leeward side of the property. It also has the most varied ground on the estate: the bedrock shifts from Monterey shale to diatomaceous earth to old riverbed deposits, so the soil changes from shallow, broken stone at the top of the slope to deep, rich earth at the bottom. The wine comes from the steeper top half of the hill, where the stony soils are poorest. \"La côte\" is French for \"the slope\", a nod to Burgundy's famous Côte d'Or. Look for red cherry and wild strawberry with dried herbs and spice from the whole bunches, around a stony, mineral core and firm, fine tannins."
     }
   },
-  "Domaine de la Taille aux Loups": { "lat": 47.3906, "lng": 0.8832, "region": "Montlouis-sur-Loire",                    "country": "France"       },
+  "Domaine de la Taille aux Loups": {
+    "lat": 47.3906, "lng": 0.8832,
+    "village": "Montlouis-sur-Loire", "subregion": "Touraine", "region": "Loire", "country": "France"
+  },
   "Frescobaldi": {
-    "lat": 43.7711, "lng": 11.2486, "region": "Florence, Tuscany", "country": "Italy",
+    "lat": 43.7711, "lng": 11.2486,
+    "village": "Florence", "region": "Tuscany", "country": "Italy",
     "about": "The Frescobaldis are one of Florence's oldest families, and their winemaking can be traced back to 1308; the business has now passed through some thirty generations. Today the family owns a string of estates across Tuscany, from Chianti Rufina, where they make Nipozzano and Pomino, to Montalcino and the Maremma coast. Before wine was the family's best-known business, it was banking: in the late 1200s the Frescobaldis opened a branch in England and became bankers to the English crown, lending vast sums to Edward I and Edward II. Led by Lamberto Frescobaldi, the house is one of Italy's biggest names in fine wine, combining its historic Tuscan estates with newer projects.",
     "wines": {
       "Brunello di Montalcino Castelgiocondo": "CastelGiocondo is Frescobaldi's estate in Montalcino, named after a hilltop stronghold built around 1100 to guard the road from the sea to Siena. The family bought it in 1989, and its vineyards lie on the southwest side of Montalcino at 300 to 400 metres, where good drainage and sunny exposure help Sangiovese ripen fully. Like all Brunello, it is made entirely from Sangiovese and aged for years before release. Expect red cherry and plum with dried herbs and a savoury edge, firm tannins and lively acidity, gaining leather, tobacco and earthy notes as it ages. The horseman on the label is taken from a famous fresco by the Sienese painter Simone Martini, the equestrian portrait of the mercenary captain Guidoriccio da Fogliano in Siena's Palazzo Pubblico."
     }
   },
   "Gaia Wines": {
-    "lat": 36.3911, "lng": 25.4859, "region": "Vrachies, Exo Gonia, Santorini", "country": "Greece",
+    "lat": 36.3911, "lng": 25.4859,
+    "village": "Exo Gonia", "region": "Santorini", "country": "Greece",
     "about": "Gaia was founded in 1994 by two agronomists, Yiannis Paraskevopoulos and Leon Karatsalos, with wineries in Nemea on the Peloponnese and on Santorini. Their first release was just 9,800 bottles of Thalassitis, a Santorini Assyrtiko that helped put the grape on the world map. The Santorini winery sits on the beach near Kamari, in a stone building where sun-dried tomatoes were processed a century ago. To test how Assyrtiko ages, they sank bottles of Thalassitis about 20 metres under the sea off the island and compared them with the same wine kept in the cellar. Gaia is now one of the names most associated with the revival of serious Greek wine.",
     "wines": {
       "Ammonite Assyrtiko": "Ammonite is Gaia's top Santorini white, a single-vineyard Assyrtiko from a plot called Thalassina at the highest point of Megalochori, around 200 metres above the sea. The vines are ungrafted and are said to have root systems more than three centuries old, because the phylloxera louse that wiped out Europe's vines never took hold in Santorini's volcanic soil. Rather than growing up posts, the vines are woven into low baskets called kouloura that sit on the ground, so the grapes hang inside, sheltered from the island's fierce winds. The wine spends 15 months on its lees, with a small portion in new French oak, and is named after Gaia's emblem, the fossilised sea creature called an ammonite. In the glass it is all lemon, grapefruit and white peach, with smoke, flint and a salty, mineral edge; piercing acidity is balanced by a creamy texture from its long time on the lees."
     }
   },
-  "Giuseppe Mascarello":       { "lat": 44.5710, "lng": 7.9174,    "region": "Monchiero, Piedmont",                       "country": "Italy"        },
-  "Grosset":                   { "lat": -33.8500, "lng": 138.6167, "region": "Clare Valley, South Australia",             "country": "Australia"    },
+  "Giuseppe Mascarello": {
+    "lat": 44.571, "lng": 7.9174,
+    "village": "Monchiero", "subregion": "Langhe", "region": "Piedmont", "country": "Italy"
+  },
+  "Grosset": {
+    "lat": -34.0267, "lng": 138.6903,
+    "village": "Auburn", "region": "Clare Valley", "country": "Australia"
+  },
   "Henri Gouges": {
-    "lat": 47.1397, "lng": 4.9533, "region": "Nuits-Saint-Georges, Côte de Nuits", "country": "France",
+    "lat": 47.1397, "lng": 4.9533,
+    "village": "Nuits-Saint-Georges", "subregion": "Côte de Nuits", "region": "Burgundy", "country": "France",
     "about": "Domaine Henri Gouges is one of the great names of Nuits-Saint-Georges, founded around 1919 when Henri Gouges came home from the First World War and took over his father's vines. He went on to become mayor of the town and a member of the governing committee of the INAO, the body set up to define and protect France's appellations, and in the 1930s he helped draw the boundaries of Burgundy's vineyards. Remarkably, he argued against putting any Nuits vineyard forward for grand cru status, even though the strongest candidate, Les St-Georges, was one he owned a large share of, which is why Nuits-Saint-Georges still has no grand cru today. The domaine remains in the Gouges family, and its wines are known for being firm and long-lived, with Nuits' characteristic depth.",
     "wines": {
       "Clos des Porrets St-Georges": "Clos des Porrets St-Georges is a walled premier cru vineyard in Nuits-Saint-Georges that Gouges owns outright, making it a monopole: no other producer makes wine from it. That is rare in Burgundy, where most vineyards are split between many owners, so the wine gives an unusually clear picture of a single site. According to several accounts, it was here, in 1936, that Henri Gouges noticed some of his Pinot Noir vines had mutated to produce white grapes; he propagated them, and the variety, known as Pinot Gouges, is still used for the domaine's rare white wines. The red is often seen as one of the more approachable of Gouges' premier crus, with the firm Nuits structure softened by generous fruit. Dark cherry and blackberry lead, with earthy, iron-like notes and spice, turning more savoury and gamey with age."
     }
   },
-  "Klein Constantia":          { "lat": -34.0322, "lng": 18.4156,  "region": "Constantia, Western Cape",                  "country": "South Africa" },
+  "Klein Constantia": {
+    "lat": -34.0322, "lng": 18.4156,
+    "village": "Constantia", "region": "Constantia", "country": "South Africa"
+  },
   "Krug": {
-    "lat": 49.2609, "lng": 4.0365, "region": "Reims, Champagne", "country": "France",
+    "lat": 49.2609, "lng": 4.0365,
+    "village": "Reims", "region": "Champagne", "country": "France",
     "about": "Krug was founded in Reims in 1843 by Joseph Krug, a German-born winemaker from Mainz who had learned his trade at the Champagne house Jacquesson. His idea was radical for the time: to make the finest champagne every single year, whatever the weather, by blending wines from many plots and many vintages instead of relying on one good harvest. In 1848 he set out these principles in a notebook addressed to his six-year-old son, Paul, and the house still treats it as its founding text. Krug takes the comparison with music literally: through a project called Krug Echoes, it has commissioned composers to write pieces expressing how they perceive the taste of particular cuvées. Now part of LVMH, the house is still regarded as the benchmark for prestige champagne.",
     "wines": {
       "Grande Cuvée 174ème Édition": "Grande Cuvée is Krug's signature champagne, and the edition number counts how many times the blend has been recreated since Joseph Krug's first. The 174ème Édition is built around the 2018 harvest, but it combines 143 separate wines from ten different years, the oldest dating back to 2001. Reserve wines from the house's library make up 36% of the blend, which is 54% Pinot Noir, 29% Chardonnay and 17% Meunier. Every bottle carries a six-digit Krug iD on its back label, which you can look up online to read that bottle's own story, including its blend, when it was disgorged and suggestions for food and music to go with it. The house style is rich yet fresh: toasted brioche, hazelnut and honey alongside citrus, dried fruit and a hint of ginger, carried by very fine bubbles to a long finish."
     }
   },
-  "Littorai":                  { "lat": 38.4108, "lng": -122.8669, "region": "Sebastopol, Sonoma County",                 "country": "USA"          },
-  "Marc Sorrel":               { "lat": 45.0695, "lng": 4.8409,    "region": "Tain-l'Hermitage, Northern Rhône",          "country": "France"       },
-  "Nicolas-Jay":               { "lat": 45.3017, "lng": -123.0585, "region": "Yamhill-Carlton, Willamette Valley",        "country": "USA"          },
+  "Littorai": {
+    "lat": 38.4108, "lng": -122.8669,
+    "village": "Sebastopol", "region": "Sonoma County", "country": "USA"
+  },
+  "Marc Sorrel": {
+    "lat": 45.0695, "lng": 4.8409,
+    "village": "Tain-l'Hermitage", "subregion": "Northern Rhône", "region": "Rhône", "country": "France"
+  },
+  "Nicolas-Jay": {
+    "lat": 45.3017, "lng": -123.0585,
+    "subregion": "Yamhill-Carlton", "region": "Willamette Valley", "country": "USA"
+  },
   "Penfolds": {
-    "lat": -34.8642, "lng": 138.7233, "region": "Magill, South Australia", "country": "Australia",
+    "lat": -34.8642, "lng": 138.7233,
+    "village": "Magill", "region": "South Australia", "country": "Australia",
     "about": "Penfolds was founded in 1844 at Magill, on the eastern edge of Adelaide, by Christopher Rawson Penfold, an English doctor who had just emigrated with his wife Mary and brought vine cuttings with him from England and France. Its first wines were medicinal: Dr Penfold prescribed his fortified reds as tonics for patients suffering from anaemia. Mary ran the vineyard and winemaking, and after her husband's death she built the business into one of the colony's largest, making her one of Australia's first notable women winemakers. In the twentieth century the house turned to fine table wine, and today it is Australia's most famous wine name, with its numbered \"Bin\" wines and Grange at the top of the range.",
     "wines": {
       "Grange": "Grange is Australia's most famous wine, created by Penfolds' chief winemaker Max Schubert, who made the first experimental vintage in 1951 after a trip to Bordeaux convinced him Australia could make a red to rival the great châteaux. It is built mainly on Shiraz, usually with a little Cabernet Sauvignon, blended from top vineyards across South Australia and aged in new American oak. When early tastings went badly, management ordered Schubert to stop making it in 1957, but he carried on in secret for three vintages, ageing the wine in old barrels so that no new oak orders would give him away. The wine is named after The Grange, the cottage the Penfolds built at Magill. This is a dense, powerful wine of blackberry, plum and liquorice, with mocha, chocolate and spice from the American oak, and tannins built to last for decades.",
       "Bin 389 Cabernet/Shiraz": "Bin 389 was first made in 1960, another Max Schubert creation, and its blend of Cabernet Sauvignon and Shiraz is a classic Australian pairing that is rarely seen elsewhere. It is nicknamed \"Baby Grange\" because part of the wine is matured in the barrels that held the previous vintage of Grange. Like all Penfolds Bin wines, its number refers to the spot in the Magill cellars where the wine was originally stored. It is regarded as one of the most reliable and age-worthy wines in the Penfolds range. Cabernet brings blackcurrant and cassis, while Shiraz fills it out with richer plum and chocolate, all wrapped in savoury oak and firm, ripe tannins."
     }
   },
-  "Quinta do Noval":           { "lat": 41.1856, "lng": -7.5358,   "region": "Pinhão, Douro Valley",                      "country": "Portugal"     },
+  "Quinta do Noval": {
+    "lat": 41.1856, "lng": -7.5358,
+    "village": "Pinhão", "subregion": "Cima Corgo", "region": "Douro", "country": "Portugal"
+  },
   "Rhys": {
-    "lat": 37.2272, "lng": -122.0817, "region": "Santa Cruz Mountains, California", "country": "USA",
+    "lat": 37.2272, "lng": -122.0817,
+    "region": "Santa Cruz Mountains", "country": "USA",
     "about": "Rhys was founded by Kevin Harvey, a software entrepreneur and venture capitalist who became obsessed with a single question: why is some Pinot Noir so much better than others? It began with just 35 Pinot Noir vines planted in his own backyard in 1995, an experiment that grew into one of California's most admired estates. Harvey concluded that soil, more than climate or farming, was the key to quality, and set out to find steep, high, rocky sites in the Santa Cruz Mountains resembling the great vineyards of Burgundy. Planting began in 2001 and the first commercial wines followed in 2004. Today Rhys farms several hillside vineyards, each on a different type of rock, and the wines are prized for their Burgundian minerality and capacity to age.",
     "wines": {
       "Alpine Vineyard Pinot Noir": "Alpine was the first vineyard Rhys planted, in 2001, on an exposed west-facing slope between about 1,200 and 1,490 feet, where cool air from the Pacific moderates the heat. Its vines grow in the chalky soils of the Purisima formation, a mix of sandstone and mudstone laid down on an ancient seabed. Alpine and Horseshoe are only about 300 yards apart, yet they make strikingly different wines, which is about as neat a demonstration of Kevin Harvey's belief that soil matters most as you could ask for. Alpine is the more powerful and fleshy of the two, with juicy red fruit. Ripe red cherry and raspberry come with earthy spice and a chalky, mineral finish.",
       "Horseshoe Pinot Noir": "Horseshoe sits a little higher than its neighbour Alpine and was planted several years later, on very different ground: diatomaceous shale with layers of limestone. Diatomaceous shale is made from the fossilised silica shells of diatoms, microscopic algae that drifted in the ocean millions of years ago, so these vines are rooted in the remains of ancient plankton. That rock gives Horseshoe a more elegant, tightly structured style than Alpine, with a pronounced mineral edge. Typical notes include red berries, rose petal and crushed stone, with fine-grained tannins and bright acidity."
     }
   },
-  "Rhys Vineyards":            { "lat": 37.2272, "lng": -122.0817, "region": "Santa Cruz Mountains, California",          "country": "USA"          },
-  "Salon":                     { "lat": 48.9181, "lng": 3.9764,    "region": "Le Mesnil-sur-Oger, Champagne",             "country": "France"       },
-  "Te Mata":                   { "lat": -39.6539, "lng": 176.9197, "region": "Hawke's Bay",                               "country": "New Zealand"  },
-  "Tyrrell's":                 { "lat": -32.7989, "lng": 151.2867, "region": "Hunter Valley, New South Wales",            "country": "Australia"    },
+  "Rhys Vineyards": {
+    "lat": 37.2272, "lng": -122.0817,
+    "region": "Santa Cruz Mountains", "country": "USA"
+  },
+  "Salon": {
+    "lat": 48.9181, "lng": 3.9764,
+    "village": "Le Mesnil-sur-Oger", "subregion": "Côte des Blancs", "region": "Champagne", "country": "France"
+  },
+  "Te Mata": {
+    "lat": -39.6539, "lng": 176.9197,
+    "village": "Havelock North", "region": "Hawke's Bay", "country": "New Zealand"
+  },
+  "Tyrrell's": {
+    "lat": -32.7989, "lng": 151.2867,
+    "village": "Pokolbin", "region": "Hunter Valley", "country": "Australia"
+  },
   "Vega Sicilia": {
-    "lat": 41.6293, "lng": -4.2938, "region": "Valbuena de Duero, Ribera del Duero", "country": "Spain",
+    "lat": 41.6293, "lng": -4.2938,
+    "village": "Valbuena de Duero", "region": "Ribera del Duero", "country": "Spain",
     "about": "Founded in 1864 in Valbuena de Duero, Vega Sicilia is Spain's most celebrated estate and the reason Ribera del Duero is famous at all. Its founder, Eloy Lecanda, planted Bordeaux varieties from France alongside the local Tinto Fino (Tempranillo), giving the wines a structure that set them apart. Despite the name, it has nothing to do with Sicily: the land was known as the \"Pago de la Vega Santa Cecilia,\" the meadow of Saint Cecilia, and the saint's name was worn down over time into \"Sicilia.\" The estate is known for very long ageing before release, and it was famous for over a century before the region won official appellation status in 1982. Owned by the Álvarez family since 1982, it remains a benchmark for age-worthy Spanish red.",
     "wines": {
       "Unico": "Unico is Vega Sicilia's flagship and one of the world's most sought-after reds, made mainly from Tinto Fino with a share of Cabernet Sauvignon. It is made only in years the estate judges worthy, and is skipped altogether in lesser vintages. It is typically released around a decade after the harvest, after years in barrels of different sizes and then a long rest in bottle, so a new release is usually already older than most wines ever get before they're opened. The result is a wine built to evolve for decades more in the cellar. Dark fruit such as blackcurrant and plum mingles with cedar, tobacco and sweet spice, framed by fine but firm tannins; with age it moves towards leather, truffle and forest floor while keeping remarkable freshness.",

@@ -2,8 +2,8 @@
 """
 check_geocodes.py — verify producer coordinates against Nominatim (OpenStreetMap).
 
-Reads PRODUCERS directly from index.html so it stays in sync.
-Tries each producer by name first; falls back to the region string if not found.
+Reads producers.json.
+Tries each producer by name first; falls back to its village/region if not found.
 Rate-limited to 1 req/s to respect Nominatim's usage policy.
 
 Usage:
@@ -12,7 +12,6 @@ Usage:
 
 import json
 import math
-import re
 import sys
 import time
 import urllib.parse
@@ -24,7 +23,7 @@ FAR_KM = 30         # show as FAR between threshold and this; VERY FAR above
 COUNTRY_CODES = {
     "France": "fr", "Italy": "it", "Spain": "es", "Portugal": "pt",
     "USA": "us", "Australia": "au", "New Zealand": "nz",
-    "South Africa": "za", "Lebanon": "lb",
+    "South Africa": "za", "Lebanon": "lb", "Greece": "gr",
 }
 
 
@@ -50,35 +49,17 @@ def nominatim_search(q, countrycodes=None):
 
 
 def load_producers():
-    with open("index.html", encoding="utf-8") as f:
-        html = f.read()
-
-    marker = "const PRODUCERS = "
     try:
-        start = html.index(marker) + len(marker)
-    except ValueError:
-        sys.exit("ERROR: could not find 'const PRODUCERS' in index.html")
+        with open("producers.json", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, json.JSONDecodeError) as e:
+        sys.exit(f"ERROR reading producers.json: {e}")
 
-    # Walk forward counting braces to find the end of the object
-    depth, end = 0, start
-    for i, c in enumerate(html[start:], start):
-        if c == "{":
-            depth += 1
-        elif c == "}":
-            depth -= 1
-            if depth == 0:
-                end = i + 1
-                break
 
-    js = html[start:end]
-    # Make it valid JSON: quote bare keys, strip trailing commas
-    js = re.sub(r"\b(lat|lng|region|country)\b\s*:", r'"\1":', js)
-    js = re.sub(r",(\s*[}\]])", r"\1", js)
-
-    try:
-        return json.loads(js)
-    except json.JSONDecodeError as e:
-        sys.exit(f"ERROR parsing PRODUCERS: {e}")
+def place(geo):
+    """Most specific place name available, e.g. 'Avize, Champagne'."""
+    parts = [geo.get("village"), geo.get("subregion"), geo["region"]]
+    return ", ".join(p for p in parts if p)
 
 
 def check_producer(name, geo):
@@ -94,10 +75,10 @@ def check_producer(name, geo):
     time.sleep(1.1)
 
     if not results:
-        # Try 2: region + country (gives us at least the village)
+        # Try 2: village/region + country (gives us at least the village)
         source = "region"
         try:
-            results = nominatim_search(f"{geo['region']}, {geo['country']}", cc)
+            results = nominatim_search(f"{place(geo)}, {geo['country']}", cc)
         except Exception as e:
             print(f"  [{name}] network error on fallback: {e}", file=sys.stderr)
         time.sleep(1.1)
@@ -180,12 +161,12 @@ def main():
         r = results[name]
         geo = r["geo"]
         print(f"  {name}")
-        print(f"    region   : {geo['region']}, {geo['country']}")
+        print(f"    place    : {place(geo)}, {geo['country']}")
         print(f"    current  : lat={geo['lat']}, lng={geo['lng']}")
         if r["status"] != "NOT FOUND":
             print(f"    suggested: lat={r['slat']:.4f}, lng={r['slng']:.4f}  ({r['dist']:.1f} km away)")
             print(f"    via [{r['source']}]: {(r['display'] or '')[:90]}")
-            print(f"    JS snippet:")
+            print(f"    JSON snippet:")
             print(f'      "lat": {r["slat"]:.4f}, "lng": {r["slng"]:.4f},')
         print()
 

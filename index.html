@@ -668,7 +668,8 @@
 <script>
 /* ---------- Producer geocodes ----------
  * Coordinates are approximate — winery, estate, or village/appellation centre.
- * Edit freely. Country is shown in the sidebar; region is shown in the popup.
+ * Edit freely. Each producer has an optional village and subregion, plus region and country.
+ * The popup shows village + region; the detail panel shows the full hierarchy.
  */
 let PRODUCERS = {};
 
@@ -929,11 +930,20 @@ function buildPopup(producer, wines, geo) {
 
   return `
     <div class="popup-inner">
-      <div class="popup-region">${escapeHtml(geo.region)}</div>
+      <div class="popup-region">${escapeHtml(placeLabel(geo))}</div>
       <div class="popup-producer">${escapeHtml(producer)}</div>
       <ul class="popup-wines">${items}</ul>
       ${hasNotes(geo) ? `<button class="popup-more" data-producer="${escapeHtml(producer)}">About this producer &rarr;</button>` : ''}
     </div>`;
+}
+
+// "Nuits-Saint-Georges, Burgundy" in the popup; full adds subregion and country.
+// Repeated names (e.g. Constantia, Constantia) are collapsed.
+function placeLabel(geo, full = false) {
+  const parts = full
+    ? [geo.village, geo.subregion, geo.region, geo.country]
+    : [geo.village || geo.subregion, geo.region];
+  return parts.filter((p, i) => p && parts.indexOf(p) === i).join(', ');
 }
 
 function hasNotes(geo) {
@@ -971,7 +981,7 @@ function buildDetail(producer, wines, geo) {
   }).join('');
 
   return `
-    <div class="detail-region">${escapeHtml(geo.region)}, ${escapeHtml(geo.country)}</div>
+    <div class="detail-region">${escapeHtml(placeLabel(geo, true))}</div>
     <h2 class="detail-producer">${escapeHtml(producer)}</h2>
     ${geo.about ? `<p class="detail-about">${escapeHtml(geo.about)}</p>` : ''}
     <ul class="detail-wines">${items}</ul>`;
