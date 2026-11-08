@@ -946,6 +946,21 @@ function placeLabel(geo, full = false) {
   return parts.filter((p, i) => p && parts.indexOf(p) === i).join(', ');
 }
 
+/* ---------- Tagged facts ----------
+ * Notes can mark quiz-worthy facts as {{answer|kind}}, e.g. "founded in {{1844|year}}".
+ * The panel shows just the answer; the quiz (later) blanks it out and draws wrong
+ * options from other facts of the same kind.
+ */
+const FACT_KINDS = ['person', 'place', 'year', 'number', 'grape', 'term', 'org'];
+const FACT_RE = /\{\{([^{}|]+)\|([^{}|]+)\}\}/g;
+
+function stripFacts(text) {
+  return text.replace(FACT_RE, (match, answer, kind) => {
+    if (!FACT_KINDS.includes(kind)) console.warn(`Unknown fact kind "${kind}" in: ${match}`);
+    return answer;
+  });
+}
+
 function hasNotes(geo) {
   return Boolean(geo.about || (geo.wines && Object.keys(geo.wines).length));
 }
@@ -976,14 +991,14 @@ function buildDetail(producer, wines, geo) {
         <div class="detail-wine-name">${escapeHtml(name)}</div>
         ${grapes ? `<div class="detail-wine-grapes">${escapeHtml(grapes)}</div>` : ''}
         <div class="detail-wine-holdings">${holdings}</div>
-        ${note ? `<p class="detail-wine-note">${escapeHtml(note)}</p>` : ''}
+        ${note ? `<p class="detail-wine-note">${escapeHtml(stripFacts(note))}</p>` : ''}
       </li>`;
   }).join('');
 
   return `
     <div class="detail-region">${escapeHtml(placeLabel(geo, true))}</div>
     <h2 class="detail-producer">${escapeHtml(producer)}</h2>
-    ${geo.about ? `<p class="detail-about">${escapeHtml(geo.about)}</p>` : ''}
+    ${geo.about ? `<p class="detail-about">${escapeHtml(stripFacts(geo.about))}</p>` : ''}
     <ul class="detail-wines">${items}</ul>`;
 }
 
