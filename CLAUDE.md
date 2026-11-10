@@ -14,7 +14,7 @@ Then open http://localhost:8000. The CSV must be served over HTTP — opening `i
 
 This is a single-file app: all HTML, CSS, and JavaScript live in `index.html`. There is no build step, bundler, or package manager.
 
-**Data source:** `cellar.csv` — columns are `Producer, Wine, Vintage, Quantity, Format_cl, Type, Grapes` (Vintage is `NV` for non-vintage; grapes are separated by ` / `). Parsed at runtime by PapaParse.
+**Data source:** `cellar.csv` — columns are `Producer, Wine, Vintage, Quantity, Format_cl, Type, Grapes, Appellation` (Vintage is `NV` for non-vintage; grapes are separated by ` / `). `Appellation` is where the wine comes from (AOC/DOC/AVA/GI), which can differ from the producer's location in `producers.json`; it is shown beside the grapes unless the wine's name already contains it. Parsed at runtime by PapaParse.
 
 **Mapping:** Leaflet 1.9.4 with CARTO Voyager tiles. CARTO requires an API key: the production key (restricted to `tompersona.github.io`) is inline in `index.html`; for local dev, create a gitignored `config.local.js` containing `window.CARTO_LOCAL_KEY = '...';` with a key restricted to `localhost`/`127.0.0.1`. Markers are `L.divIcon` elements styled via `.wine-marker`.
 

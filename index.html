@@ -550,6 +550,12 @@
     color: var(--ink);
   }
 
+  .popup-wine-grapes .origin,
+  .detail-wine-grapes .origin {
+    font-style: normal;
+    color: var(--ink);
+  }
+
   .detail-wine-grapes {
     margin-top: 3px;
     font-size: 10px;
@@ -914,8 +920,9 @@ function buildPopup(producer, wines, geo) {
     const fmt = parseFloat(w.Format_cl);
     let fmtLabel = '';
     if (fmt && fmt !== 75) fmtLabel = ` · ${fmt}cl`;
-    const grapeLine = w.Grapes
-      ? `<div class="popup-wine-grapes">${escapeHtml(w.Grapes)}</div>`
+    const origin = originLine(w);
+    const grapeLine = origin
+      ? `<div class="popup-wine-grapes">${origin}</div>`
       : '';
     return `
       <li class="popup-wine">
@@ -961,6 +968,17 @@ function stripFacts(text) {
   });
 }
 
+// "Pauillac · Cabernet Sauvignon / Merlot…" as HTML. The appellation is left out
+// when the wine's name already contains it (e.g. "Cornas Les Eygats").
+function originLine(w) {
+  const app = w.Appellation?.trim();
+  const showApp = app && !w.Wine.toLowerCase().includes(app.toLowerCase());
+  return [
+    showApp ? `<span class="origin">${escapeHtml(app)}</span>` : '',
+    w.Grapes ? escapeHtml(w.Grapes) : ''
+  ].filter(Boolean).join(' · ');
+}
+
 function hasNotes(geo) {
   return Boolean(geo.about || (geo.wines && Object.keys(geo.wines).length));
 }
@@ -984,12 +1002,12 @@ function buildDetail(producer, wines, geo) {
         const fmtLabel = fmt && fmt !== 75 ? ` · ${fmt}cl` : '';
         return `<span><span class="vintage">${escapeHtml(w.Vintage || 'NV')}</span> <span class="qty">${escapeHtml(w.Quantity)} btl${fmtLabel}</span></span>`;
       }).join('');
-    const grapes = list[0].Grapes;
+    const origin = originLine(list[0]);
     const note = geo.wines?.[name];
     return `
       <li class="detail-wine">
         <div class="detail-wine-name">${escapeHtml(name)}</div>
-        ${grapes ? `<div class="detail-wine-grapes">${escapeHtml(grapes)}</div>` : ''}
+        ${origin ? `<div class="detail-wine-grapes">${origin}</div>` : ''}
         <div class="detail-wine-holdings">${holdings}</div>
         ${note ? `<p class="detail-wine-note">${escapeHtml(stripFacts(note))}</p>` : ''}
       </li>`;

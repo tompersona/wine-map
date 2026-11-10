@@ -1,39 +1,39 @@
-Producer,Wine,Vintage,Quantity,Format_cl,Type,Grapes
-Vega Sicilia,Valbuena 5°,2016,6,75.0,Red,Tempranillo / Merlot
-Vega Sicilia,Unico,2009,3,75.0,Red,Tempranillo / Cabernet Sauvignon
-Salon,Cuvée 'S' Le Mesnil Blanc de Blancs Brut,2015,3,75.0,Sparkling,Chardonnay
-Rhys,Alpine Vineyard Pinot Noir,2021,6,75.0,Red,Pinot Noir
-Penfolds,Grange,2021,6,75.0,Red,Shiraz / Cabernet Sauvignon
-Antinori,Solaia,2022,3,75.0,Red,Cabernet Sauvignon / Sangiovese / Cabernet Franc
-Agrapart & Fils,Experience Blanc de Blancs Brut Nature Grand Cru,2017,6,75.0,Sparkling,Chardonnay
-Domaine de la Taille aux Loups,Triple Zéro,NV,6,75.0,Sparkling,Chenin Blanc
-Penfolds,Bin 389 Cabernet/Shiraz,2023,6,75.0,Red,Cabernet Sauvignon / Shiraz
-Grosset,Polish Hill Riesling,2025,6,75.0,White,Riesling
-Te Mata,Coleraine,2023,6,75.0,Red,Cabernet Sauvignon / Merlot / Cabernet Franc
-Nicolas-Jay,Bishop Creek Pinot Noir,2022,6,75.0,Red,Pinot Noir
-Domaine de la Côte,Bloom's Field Pinot Noir,2022,6,75.0,Red,Pinot Noir
-Château Lafleur,Château Lafleur,2024,3,75.0,Red,Merlot / Cabernet Franc
-Littorai,Savoy Vineyard Pinot Noir,2022,6,75.0,Red,Pinot Noir
-Quinta do Noval,Vintage Port,2017,6,75.0,Fortified,Touriga Nacional / Touriga Francesa / Tinto Cão / Tinta Roriz / Sezão
-Domaine de la Côte,La Côte Pinot Noir,2023,6,75.0,Red,Pinot Noir
-Domaine Bruno Clair,Morey-Saint-Denis En La Rue De Vergy,2024,6,75.0,Red,Pinot Noir
-Domaine de l'Arlot,Clos des Forêts St-Georges,2016,6,75.0,Red,Pinot Noir
-Domaine Taupenot-Merme,Charmes-Chambertin Grand Cru,2010,6,75.0,Red,Pinot Noir
-Château d'Yquem,Sauternes,2023,6,37.5,Dessert,Sémillon / Sauvignon Blanc
-Château Latour,Château Latour,2019,3,75.0,Red,Cabernet Sauvignon / Merlot / Cabernet Franc / Petit Verdot
-Château Rauzan-Ségla,Cru Classé Margaux,1996,3,75.0,Red,Cabernet Sauvignon / Merlot / Cabernet Franc / Petit Verdot
-Château Labégorce-Zédé,Cru Bourgeois Margaux,1996,12,75.0,Red,Cabernet Sauvignon / Merlot / Cabernet Franc
-Clos l'Eglise,Pomerol,1998,6,75.0,Red,Merlot / Cabernet Franc
-Domaine Courbis,Cornas Les Eygats,2012,6,75.0,Red,Syrah
-Henri Gouges,Clos des Porrets St-Georges,1996,11,75.0,Red,Pinot Noir
-Chateau Musar,Rouge,2009,6,75.0,Red,Cabernet Sauvignon / Cinsault / Carignan
-Bodegas Aalto,Aalto P.S.,2004,5,75.0,Red,Tempranillo
-Frescobaldi,Brunello di Montalcino Castelgiocondo,1997,12,75.0,Red,Sangiovese
-Giuseppe Mascarello,Barolo Monprivato,2004,5,75.0,Red,Nebbiolo
-Rhys Vineyards,Horseshoe Pinot Noir,2012,12,75.0,Red,Pinot Noir
-Marc Sorrel,Hermitage Blanc Les Rocoules,2004,5,75.0,White,Marsanne / Roussanne
-Tyrrell's,Vat 1 Semillon,2015,6,75.0,White,Sémillon
-Château Lamothe-Guignard,Cru Classé Sauternes,1988,6,75.0,Dessert,Sémillon / Sauvignon Blanc / Muscadelle
-Klein Constantia,Vin de Constance,2007,6,50.0,Dessert,Muscat Blanc à Petits Grains
-Gaia Wines,Ammonite Assyrtiko,2023,6,75.0,White,Assyrtiko
-Krug,Grande Cuvée 174ème Édition,NV,3,75.0,Sparkling,Pinot Noir / Chardonnay / Meunier
+Producer,Wine,Vintage,Quantity,Format_cl,Type,Grapes,Appellation
+Vega Sicilia,Valbuena 5°,2016,6,75.0,Red,Tempranillo / Merlot,Ribera del Duero
+Vega Sicilia,Unico,2009,3,75.0,Red,Tempranillo / Cabernet Sauvignon,Ribera del Duero
+Salon,Cuvée 'S' Le Mesnil Blanc de Blancs Brut,2015,3,75.0,Sparkling,Chardonnay,Champagne
+Rhys,Alpine Vineyard Pinot Noir,2021,6,75.0,Red,Pinot Noir,Santa Cruz Mountains
+Penfolds,Grange,2021,6,75.0,Red,Shiraz / Cabernet Sauvignon,South Australia
+Antinori,Solaia,2022,3,75.0,Red,Cabernet Sauvignon / Sangiovese / Cabernet Franc,Toscana IGT
+Agrapart & Fils,Experience Blanc de Blancs Brut Nature Grand Cru,2017,6,75.0,Sparkling,Chardonnay,Champagne
+Domaine de la Taille aux Loups,Triple Zéro,NV,6,75.0,Sparkling,Chenin Blanc,Montlouis-sur-Loire
+Penfolds,Bin 389 Cabernet/Shiraz,2023,6,75.0,Red,Cabernet Sauvignon / Shiraz,South Australia
+Grosset,Polish Hill Riesling,2025,6,75.0,White,Riesling,Clare Valley
+Te Mata,Coleraine,2023,6,75.0,Red,Cabernet Sauvignon / Merlot / Cabernet Franc,Hawke's Bay
+Nicolas-Jay,Bishop Creek Pinot Noir,2022,6,75.0,Red,Pinot Noir,Yamhill-Carlton
+Domaine de la Côte,Bloom's Field Pinot Noir,2022,6,75.0,Red,Pinot Noir,Sta. Rita Hills
+Château Lafleur,Château Lafleur,2024,3,75.0,Red,Merlot / Cabernet Franc,Pomerol
+Littorai,Savoy Vineyard Pinot Noir,2022,6,75.0,Red,Pinot Noir,Anderson Valley
+Quinta do Noval,Vintage Port,2017,6,75.0,Fortified,Touriga Nacional / Touriga Francesa / Tinto Cão / Tinta Roriz / Sezão,Port
+Domaine de la Côte,La Côte Pinot Noir,2023,6,75.0,Red,Pinot Noir,Sta. Rita Hills
+Domaine Bruno Clair,Morey-Saint-Denis En La Rue De Vergy,2024,6,75.0,Red,Pinot Noir,Morey-Saint-Denis
+Domaine de l'Arlot,Clos des Forêts St-Georges,2016,6,75.0,Red,Pinot Noir,Nuits-Saint-Georges
+Domaine Taupenot-Merme,Charmes-Chambertin Grand Cru,2010,6,75.0,Red,Pinot Noir,Charmes-Chambertin
+Château d'Yquem,Sauternes,2023,6,37.5,Dessert,Sémillon / Sauvignon Blanc,Sauternes
+Château Latour,Château Latour,2019,3,75.0,Red,Cabernet Sauvignon / Merlot / Cabernet Franc / Petit Verdot,Pauillac
+Château Rauzan-Ségla,Cru Classé Margaux,1996,3,75.0,Red,Cabernet Sauvignon / Merlot / Cabernet Franc / Petit Verdot,Margaux
+Château Labégorce-Zédé,Cru Bourgeois Margaux,1996,12,75.0,Red,Cabernet Sauvignon / Merlot / Cabernet Franc,Margaux
+Clos l'Eglise,Pomerol,1998,6,75.0,Red,Merlot / Cabernet Franc,Pomerol
+Domaine Courbis,Cornas Les Eygats,2012,6,75.0,Red,Syrah,Cornas
+Henri Gouges,Clos des Porrets St-Georges,1996,11,75.0,Red,Pinot Noir,Nuits-Saint-Georges
+Chateau Musar,Rouge,2009,6,75.0,Red,Cabernet Sauvignon / Cinsault / Carignan,Bekaa Valley
+Bodegas Aalto,Aalto P.S.,2004,5,75.0,Red,Tempranillo,Ribera del Duero
+Frescobaldi,Brunello di Montalcino Castelgiocondo,1997,12,75.0,Red,Sangiovese,Brunello di Montalcino
+Giuseppe Mascarello,Barolo Monprivato,2004,5,75.0,Red,Nebbiolo,Barolo
+Rhys Vineyards,Horseshoe Pinot Noir,2012,12,75.0,Red,Pinot Noir,Santa Cruz Mountains
+Marc Sorrel,Hermitage Blanc Les Rocoules,2004,5,75.0,White,Marsanne / Roussanne,Hermitage
+Tyrrell's,Vat 1 Semillon,2015,6,75.0,White,Sémillon,Hunter Valley
+Château Lamothe-Guignard,Cru Classé Sauternes,1988,6,75.0,Dessert,Sémillon / Sauvignon Blanc / Muscadelle,Sauternes
+Klein Constantia,Vin de Constance,2007,6,50.0,Dessert,Muscat Blanc à Petits Grains,Constantia
+Gaia Wines,Ammonite Assyrtiko,2023,6,75.0,White,Assyrtiko,Santorini
+Krug,Grande Cuvée 174ème Édition,NV,3,75.0,Sparkling,Pinot Noir / Chardonnay / Meunier,Champagne
