@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cellar Quiz</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #f5f1ea;
+    --paper: #faf7f1;
+    --ink: #1a1612;
+    --ink-soft: #4a423a;
+    --accent: #7a1f1f;        /* claret */
+    --accent-soft: #a04545;
+    --line: #d6cdbf;
+    --gold: #8a6f3c;
+    --good: #4f6b3a;          /* olive */
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .quiz {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: calc(20px + env(safe-area-inset-top, 0px)) 16px calc(40px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* ===== Header ===== */
+  .quiz-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 1;
+    margin: 0;
+  }
+
+  h1 em { font-style: italic; color: var(--accent); }
+
+  .back {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  /* ===== Progress ===== */
+  .progress {
+    display: flex;
+    gap: 6px;
+    margin: 18px 0 22px;
+  }
+
+  .progress span {
+    flex: 1;
+    height: 4px;
+    background: var(--line);
+  }
+
+  .progress .current { background: var(--gold); }
+  .progress .right { background: var(--good); }
+  .progress .wrong { background: var(--accent); }
+
+  /* ===== Question ===== */
+  .q-kicker {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .q-prompt {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 25px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0 0 16px;
+  }
+
+  .q-context {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.5;
+    background: rgba(255, 255, 255, 0.55);
+    border-left: 2px solid var(--gold);
+    padding: 12px 14px;
+    margin: 0 0 16px;
+  }
+
+  .blank {
+    display: inline-block;
+    min-width: 3.5em;
+    border-bottom: 2px solid var(--accent);
+    line-height: 1;
+  }
+
+  .redacted {
+    display: inline-block;
+    min-width: 2.5em;
+    height: 0.9em;
+    vertical-align: -0.05em;
+    background: var(--line);
+  }
+
+  .q-map, .fb-map {
+    height: 220px;
+    border: 1px solid var(--line);
+    margin: 0 0 16px;
+    background: var(--paper);
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 16px;
+    text-align: left;
+    font: inherit;
+    font-size: 15px;
+    line-height: 1.35;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .option:disabled { cursor: default; color: var(--ink); }
+  .option.dim { opacity: 0.55; }
+  .option.correct { border-color: var(--good); background: rgba(79, 107, 58, 0.12); }
+  .option.wrong { border-color: var(--accent); background: rgba(122, 31, 31, 0.08); }
+  .option .mark { font-weight: 600; flex-shrink: 0; }
+  .option.correct .mark { color: var(--good); }
+  .option.wrong .mark { color: var(--accent); }
+
+  /* ===== Feedback ===== */
+  .feedback {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .verdict {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .verdict.good { color: var(--good); }
+  .verdict.bad { color: var(--accent); }
+
+  .explain {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin: 8px 0 14px;
+  }
+
+  .explain mark {
+    background: none;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .explain .source {
+    display: block;
+    margin-top: 8px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+
+  .primary {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    padding: 15px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  /* ===== Summary ===== */
+  .score {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--accent);
+    margin: 8px 0 4px;
+  }
+
+  .score small { font-size: 28px; color: var(--ink-soft); }
+
+  .review {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .review li {
+    display: flex;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px dotted var(--line);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .review .tick { font-weight: 600; flex-shrink: 0; width: 1em; }
+  .review .tick.good { color: var(--good); }
+  .review .tick.bad { color: var(--accent); }
+  .review .answer { color: var(--ink-soft); }
+
+  .mastery {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0 0 20px;
+  }
+
+  .mastery-bar {
+    height: 6px;
+    background: var(--line);
+    margin: 6px 0 2px;
+  }
+
+  .mastery-bar span {
+    display: block;
+    height: 100%;
+    background: var(--good);
+  }
+
+  .text-button {
+    display: block;
+    margin: 28px auto 0;
+    padding: 8px;
+    font: inherit;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .text-button.armed { color: var(--accent); }
+
+  .loading {
+    padding: 40px 0;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-soft);
+  }
+
+  /* ===== Map pins ===== */
+  .pin {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(26, 22, 18, 0.4);
+  }
+
+  .pin.other { background: #8c8279; }
+
+  .leaflet-tooltip.pin-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    box-shadow: none;
+    padding: 3px 7px;
+  }
+
+  .leaflet-control-attribution { font-size: 9px !important; }
+</style>
+</head>
+<body>
+
+<main class="quiz">
+  <div class="quiz-top">
+    <h1>The Cellar <em>Quiz</em></h1>
+    <a class="back" href="index.html">&larr; Map</a>
+  </div>
+  <div id="app"><div class="loading">Uncorking questions…</div></div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<!-- Optional, gitignored: sets window.CARTO_LOCAL_KEY for local dev (404s on GitHub Pages) -->
+<script src="config.local.js"></script>
+
+<script>
+/* ======================================================================
+ * The Cellar Quiz
+ *
+ * Every question is generated from cellar.csv and producers.json — no API.
+ * Each question has a stable id (e.g. "pr:Penfolds"); answers move it up or
+ * down a set of boxes (simple spaced repetition), stored in localStorage.
+ * Each round draws QUESTIONS_PER_ROUND questions, weighted towards weak ones.
+ * ====================================================================== */
+
+const QUESTIONS_PER_ROUND = 5;
+const MAX_PER_TYPE = 2;            // variety: at most this many of one question type per round
+const STORE_KEY = 'cellarQuiz.v1';
+const BOX_WEIGHTS = [8, 5, 3, 1.5, 0.6];   // box 0 = weakest; new questions start at box 0
+const MAX_BOX = BOX_WEIGHTS.length - 1;
+const MERGE = { 'Rhys Vineyards': 'Rhys' }; // same merge as the map
+
+const CARTO_API_KEY = location.hostname === 'tompersona.github.io'
+  ? 'cb1_4h6b_1_d31c3927a0dd51eff782f721'
+  : window.CARTO_LOCAL_KEY;
+
+const FACT_RE = /\{\{([^{}|]+)\|([^{}|]+)\}\}/g;
+const BLANK = '\u0000';            // placeholder for the blanked fact while building HTML
+
+let PRODUCERS = {};  // name -> geo (+ about, wines)
+let WINES = [];      // one entry per producer + wine name
+let FACTS = [];      // tagged facts, one per {{answer|kind}}
+let CANDIDATES = []; // every question the data can produce: { id, type, build }
+
+/* ---------- Utilities ---------- */
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+const norm = s => String(s).toLowerCase().trim();
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const uniq = arr => [...new Map(arr.map(x => [norm(x), x])).values()];
+
+// Take n wrong options from pools in priority order (each pool shuffled),
+// skipping anything equal to the answer or already chosen. Null if too few.
+function distractors(answer, pools, n = 3, key = x => norm(x)) {
+  const chosen = [];
+  const seen = new Set([key(answer)]);
+  for (const pool of pools) {
+    for (const item of shuffle(pool)) {
+      if (chosen.length >= n) break;
+      const k = key(item);
+      if (seen.has(k)) continue;
+      seen.add(k);
+      chosen.push(item);
+    }
+  }
+  return chosen.length >= n ? chosen : null;
+}
+
+function placeLabel(geo, full = false) {
+  const parts = full
+    ? [geo.village, geo.subregion, geo.region, geo.country]
+    : [geo.village || geo.subregion, geo.region];
+  return parts.filter((p, i) => p && parts.indexOf(p) === i).join(', ');
+}
+
+function distanceKm(a, b) {
+  const R = 6371, rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad, dLng = (b.lng - a.lng) * rad;
+  const h = Math.sin(dLat / 2) ** 2 +
+            Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+/* ---------- Name handling ---------- */
+
+// Words too generic to identify a producer or wine
+const STOP = new Set(['domaine', 'château', 'chateau', 'wines', 'wine', 'bodegas', 'quinta',
+  'clos', 'vineyards', 'vineyard', 'estate', 'grand', 'grande', 'cuvée', 'brut', 'blanc',
+  'rouge', 'nature', 'with', 'from', 'fils', 'saint', 'des', 'les', 'del', 'della', 'the', 'and']);
+
+// Label words that don't make a wine name distinctive ("Cru Classé Margaux", "Vintage Port")
+const LABEL_WORDS = new Set(['cru', 'classé', 'bourgeois', 'vintage', 'premier', 'reserve', 'riserva']);
+
+function nameTokens(name) {
+  return (name.match(/[\p{L}\p{N}']+/gu) || [])
+    .map(t => t.replace(/'s?$/, ''))
+    .filter(t => t.length >= 3 && !STOP.has(norm(t)));
+}
+
+// Does a wine's name already give away its producer? ("Château Latour")
+const nameHasProducer = w => nameTokens(w.producer).some(t => norm(w.wine).includes(norm(t)));
+
+// "Penfolds Grange", but just "Château Latour" when the name already says it
+const wineLabel = w => nameHasProducer(w) ? w.wine : `${w.producer} ${w.wine}`;
+
+// Names that can't stand alone in "Who makes X?": the producer's own name ("Château Latour"),
+// or nothing left once the appellation and label words are removed ("Cru Classé Margaux",
+// "Vintage Port", "Rouge")
+function isGenericName(w) {
+  if (nameHasProducer(w)) return true;
+  const rest = w.appellation ? w.wine.replace(new RegExp(w.appellation.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), ' ') : w.wine;
+  return !nameTokens(rest).some(t => !LABEL_WORDS.has(norm(t)) && !GRAPE_WORDS.has(norm(t)));
+}
+
+// Hide names in a paragraph ("Penfolds" -> ▇▇), including possessives and plurals
+function redact(text, names) {
+  let html = escapeHtml(text);
+  const tokens = uniq(names.flatMap(nameTokens)).filter(t => !GRAPE_WORDS.has(norm(t)));
+  tokens.sort((a, b) => b.length - a.length);
+  for (const t of tokens) {
+    const stem = t.length > 5 ? t.slice(0, -1) : t;
+    const re = new RegExp(`(^|[^\\p{L}\\p{N}])${stem.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\\p{L}'’]*`, 'giu');
+    html = html.replace(re, '$1<span class="redacted"></span>');
+  }
+  return html;
+}
+
+let GRAPE_WORDS = new Set();
+
+// "a" or "an" before a name (by spelling, which suits the appellations we have)
+const article = word => /^[aeiouàâéèêîôû]/i.test(word) ? 'an' : 'a';
+
+// A short clue from a paragraph: one random sentence, plus the next one if it's very short
+function clueFrom(text) {
+  const all = sentences(stripFacts(text));
+  const i = Math.floor(Math.random() * all.length);
+  let clue = all[i];
+  if (clue.length < 80 && all[i + 1]) clue += ' ' + all[i + 1];
+  return clue;
+}
+
+/* ---------- Sentences and tagged facts ---------- */
+
+const stripFacts = text => text.replace(FACT_RE, '$1');
+
+function sentences(text) {
+  // Protect decimals ("7.5") and abbreviations ("Sta. Rita") from splitting
+  const safe = text
+    .replace(/(\d)\.(\d)/g, '$1\u0001$2')
+    .replace(/\b(Sta|St|Mt|Dr)\./g, '$1\u0002');
+  const parts = safe.match(/[^.!?]+[.!?]+["”]?(?:\s+|$)|[^.!?]+$/g) || [safe];
+  return parts.map(s => s.trim().replace(/\u0001/g, '.').replace(/\u0002/g, '.')).filter(Boolean);
+}
+
+function extractFacts() {
+  const facts = [];
+  for (const [producer, geo] of Object.entries(PRODUCERS)) {
+    const paragraphs = [];
+    if (geo.about) paragraphs.push({ wine: null, text: geo.about });
+    for (const [wine, text] of Object.entries(geo.wines || {})) paragraphs.push({ wine, text });
+
+    for (const { wine, text } of paragraphs) {
+      for (const sentence of sentences(text)) {
+        const tags = [...sentence.matchAll(FACT_RE)];
+        tags.forEach((tag, i) => {
+          // This tag becomes the blank; every other tag in the sentence becomes plain text
+          let n = -1;
+          const marked = sentence.replace(FACT_RE, (m, answer) => (++n === i ? BLANK : answer));
+          const [before, after] = marked.split(BLANK).map(escapeHtml);
+          facts.push({
+            producer: MERGE[producer] || producer,
+            wine,
+            answer: tag[1],
+            kind: tag[2],
+            blanked: `${before}<span class="blank">&nbsp;</span>${after}`,
+            revealed: `${before}<mark>${escapeHtml(tag[1])}</mark>${after}`
+          });
+        });
+      }
+    }
+  }
+  return facts;
+}
+
+/* ---------- Made-up years and numbers for wrong options ---------- */
+
+function yearDistractors(answer) {
+  const y = parseInt(answer, 10);
+  const thisYear = new Date().getFullYear();
+  // Match the answer's roundness, so "1100" isn't the only round option
+  const step = y % 100 === 0 ? 50 : y % 10 === 0 ? 10 : 1;
+  const offsets = shuffle(step === 1
+    ? [-30, -20, -12, -8, -5, -3, 3, 5, 8, 12, 20, 30]
+    : [-4, -3, -2, -1, 1, 2, 3, 4].map(k => k * step));
+  const out = [];
+  for (const o of offsets) {
+    if (out.length === 3) break;
+    if (y + o <= thisYear && y + o > 0) out.push(String(y + o));
+  }
+  return out.length === 3 ? out : null;
+}
+
+function numberDistractors(answer) {
+  const value = parseFloat(answer.replace(/,/g, ''));
+  if (!isFinite(value) || value <= 0) return null;
+  const decimals = (answer.split('.')[1] || '').length;
+  const useCommas = answer.includes(',') || value >= 1000;
+  const format = v => useCommas
+    ? v.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+    : v.toFixed(decimals);
+  const tidy = v => {
+    if (decimals && Number.isInteger(value * 2)) return Math.max(0.5, Math.round(v * 2) / 2);   // 7.5 -> other halves
+    if (decimals) return Math.round(v * 10 ** decimals) / 10 ** decimals;
+    if (v >= 1000) return Math.round(v / 100) * 100;
+    if (v >= 100) return Math.round(v / 10) * 10;
+    return Math.max(1, Math.round(v));
+  };
+  const seen = new Set([format(value)]);
+  const out = [];
+  for (const f of shuffle([0.4, 0.5, 0.6, 0.75, 1.3, 1.5, 2, 2.5, 3])) {
+    if (out.length === 3) break;
+    const s = format(tidy(value * f));
+    if (!seen.has(s)) { seen.add(s); out.push(s); }
+  }
+  return out.length === 3 ? out : null;
+}
+
+/* ---------- Question building ---------- */
+
+// options: [{ label, producer? }], answer first; returns a shuffled question
+function question(q, answerOption, wrongOptions) {
+  const all = [answerOption, ...wrongOptions];
+  const options = q.keepOrder ? all.sort((a, b) => a.label.localeCompare(b.label)) : shuffle(all);
+  return { ...q, options, answer: options.indexOf(answerOption) };
+}
+
+const producerNames = () => Object.keys(PRODUCERS).filter(p => !MERGE[p]);
+const geoOf = p => PRODUCERS[p];
+const sameCountry = (p, list) => list.filter(o => geoOf(o).country === geoOf(p).country);
+
+function buildCandidates() {
+  const C = [];
+  const add = (type, id, build) => C.push({ type, id, build });
+  const producers = producerNames();
+  const regions = uniq(producers.map(p => geoOf(p).region));
+  const appellations = uniq(WINES.map(w => w.appellation).filter(Boolean));
+  const allGrapes = uniq(WINES.flatMap(w => w.grapes));
+  const namedWines = WINES.filter(w => !isGenericName(w));
+
+  // Which producer makes this wine?
+  for (const w of namedWines) {
+    add('wine-producer', `wp:${w.producer}|${w.wine}`, () => {
+      const others = producers.filter(p => p !== w.producer);
+      const geo = geoOf(w.producer);
+      const wrong = distractors(w.producer, [
+        others.filter(p => geoOf(p).region === geo.region),
+        sameCountry(w.producer, others),
+        others
+      ]);
+      if (!wrong) return null;
+      return question({
+        kicker: 'Producers',
+        prompt: `Who makes ${w.wine}?`,
+        explain: `<mark>${escapeHtml(w.producer)}</mark> makes ${escapeHtml(w.wine)}, in ${escapeHtml(placeLabel(geo))}.`,
+        focus: w.producer
+      }, { label: w.producer, producer: w.producer }, wrong.map(p => ({ label: p, producer: p })));
+    });
+  }
+
+  // Which of these wines does this producer make?
+  for (const p of producers) {
+    const own = namedWines.filter(w => w.producer === p);
+    if (!own.length) continue;
+    add('producer-wine', `pw:${p}`, () => {
+      const w = pick(own);
+      const others = namedWines.filter(o => o.producer !== p);
+      const wrong = distractors(w, [
+        others.filter(o => geoOf(o.producer).country === geoOf(p).country && o.type === w.type),
+        others.filter(o => o.type === w.type),
+        others
+      ], 3, o => norm(o.wine));
+      if (!wrong) return null;
+      const rest = own.filter(o => o !== w).map(o => escapeHtml(o.wine));
+      return question({
+        kicker: 'Producers',
+        prompt: `Which of these wines is made by ${p}?`,
+        explain: `${escapeHtml(p)} makes <mark>${escapeHtml(w.wine)}</mark>` +
+          (rest.length ? ` (and ${rest.join(', ')}).` : '.'),
+        focus: p
+      }, { label: w.wine, producer: p }, wrong.map(o => ({ label: o.wine, producer: o.producer })));
+    });
+  }
+
+  // Which region is this producer in?
+  for (const p of producers) {
+    const geo = geoOf(p);
+    add('producer-region', `pr:${p}`, () => {
+      const wrong = distractors(geo.region, [
+        uniq(producers.filter(o => geoOf(o).country === geo.country).map(o => geoOf(o).region)),
+        regions
+      ]);
+      if (!wrong) return null;
+      return question({
+        kicker: 'Regions',
+        prompt: `Which wine region is ${p} in?`,
+        explain: `${escapeHtml(p)} is in <mark>${escapeHtml(geo.region)}</mark>: ${escapeHtml(placeLabel(geo, true))}.`,
+        focus: p
+      }, { label: geo.region }, wrong.map(r => ({ label: r })));
+    });
+  }
+
+  // Which of these producers is in this region?
+  for (const region of regions) {
+    const inRegion = producers.filter(p => geoOf(p).region === region);
+    add('region-producer', `rp:${region}`, () => {
+      const p = pick(inRegion);
+      const outside = producers.filter(o => geoOf(o).region !== region);
+      const wrong = distractors(p, [sameCountry(p, outside), outside]);
+      if (!wrong) return null;
+      return question({
+        kicker: 'Regions',
+        prompt: `Which of these producers is in ${region}?`,
+        explain: `<mark>${escapeHtml(p)}</mark> is in ${escapeHtml(placeLabel(geoOf(p), true))}.`,
+        focus: p
+      }, { label: p, producer: p }, wrong.map(o => ({ label: o, producer: o })));
+    });
+  }
+
+  // Which village or town is this producer in?
+  for (const p of producers) {
+    const geo = geoOf(p);
+    if (!geo.village) continue;
+    add('producer-village', `pv:${p}`, () => {
+      const villages = o => producers.filter(o).map(x => geoOf(x).village).filter(Boolean);
+      const wrong = distractors(geo.village, [
+        villages(o => geoOf(o).region === geo.region),
+        villages(o => geoOf(o).country === geo.country),
+        villages(() => true)
+      ]);
+      if (!wrong) return null;
+      return question({
+        kicker: 'Villages',
+        prompt: `Which village or town is ${p} based in?`,
+        explain: `${escapeHtml(p)} is based in <mark>${escapeHtml(geo.village)}</mark> (${escapeHtml(placeLabel(geo, true))}).`,
+        focus: p
+      }, { label: geo.village }, wrong.map(v => ({ label: v })));
+    });
+  }
+
+  // Which part of the region? (Bordeaux: Left or Right Bank)
+  for (const p of producers) {
+    const geo = geoOf(p);
+    if (!geo.subregion) continue;
+    const subs = uniq(producers.filter(o => geoOf(o).region === geo.region)
+      .map(o => geoOf(o).subregion).filter(Boolean));
+    if (subs.length < 2) continue;
+    const banks = subs.every(s => /Bank$/.test(s));
+    add('producer-subregion', `ps:${p}`, () => question({
+      kicker: banks ? 'Left or Right Bank' : 'Subregions',
+      prompt: banks ? `Is ${p} on Bordeaux's Left Bank or Right Bank?` : `Which part of ${geo.region} is ${p} in?`,
+      explain: `${escapeHtml(p)} is on the <mark>${escapeHtml(geo.subregion)}</mark>, in ${escapeHtml(geo.village || geo.region)}.`,
+      focus: p,
+      keepOrder: banks
+    }, { label: geo.subregion }, subs.filter(s => s !== geo.subregion).map(s => ({ label: s }))));
+  }
+
+  // What is this wine made from?
+  for (const w of WINES) {
+    add('wine-grapes', `wg:${w.producer}|${w.wine}`, () => {
+      const setKey = o => [...o.grapes].map(norm).sort().join('|');
+      const others = WINES.filter(o => setKey(o) !== setKey(w));
+      const shares = o => o.grapes.some(g => w.grapes.includes(g));
+      const wrong = distractors(w, [
+        others.filter(o => o.type === w.type && shares(o)),
+        others.filter(o => o.type === w.type),
+        others
+      ], 3, setKey);
+      if (!wrong) return null;
+      return question({
+        kicker: 'Grapes',
+        prompt: `What is ${wineLabel(w)} made from?`,
+        explain: `${escapeHtml(wineLabel(w))} is made from <mark>${escapeHtml(w.grapes.join(' / '))}</mark>.`,
+        focus: w.producer
+      }, { label: w.grapes.join(' / ') }, wrong.map(o => ({ label: o.grapes.join(' / ') })));
+    });
+  }
+
+  // Which of these wines contains this grape?
+  for (const g of allGrapes) {
+    const withGrape = WINES.filter(w => w.grapes.includes(g));
+    add('grape-wine', `gw:${g}`, () => {
+      const w = pick(withGrape);
+      const without = WINES.filter(o => !o.grapes.includes(g));
+      const wrong = distractors(w, [without.filter(o => o.type === w.type), without], 3, wineLabel);
+      if (!wrong) return null;
+      return question({
+        kicker: 'Grapes',
+        prompt: `Which of these wines is made with ${g}?`,
+        explain: `<mark>${escapeHtml(wineLabel(w))}</mark>: ${escapeHtml(w.grapes.join(' / '))}.`,
+        focus: w.producer
+      }, { label: wineLabel(w), producer: w.producer },
+         wrong.map(o => ({ label: wineLabel(o), producer: o.producer })));
+    });
+  }
+
+  // Where does this wine come from? (skipped when the name gives it away)
+  const appInName = w => norm(w.wine).includes(norm(w.appellation));
+  for (const w of WINES.filter(w => w.appellation && !appInName(w))) {
+    add('wine-appellation', `wa:${w.producer}|${w.wine}`, () => {
+      const country = geoOf(w.producer).country;
+      const wrong = distractors(w.appellation, [
+        uniq(WINES.filter(o => geoOf(o.producer).country === country).map(o => o.appellation)),
+        appellations
+      ]);
+      if (!wrong) return null;
+      const geo = geoOf(w.producer);
+      return question({
+        kicker: 'Appellations',
+        prompt: `Which appellation does ${wineLabel(w)} come from?`,
+        explain: `${escapeHtml(wineLabel(w))} is ${article(w.appellation)} <mark>${escapeHtml(w.appellation)}</mark> wine. ` +
+          `${escapeHtml(w.producer)} is based in ${escapeHtml(placeLabel(geo))}.`,
+        focus: w.producer
+      }, { label: w.appellation }, wrong.map(a => ({ label: a })));
+    });
+  }
+
+  // Which of these wines comes from this appellation?
+  for (const app of appellations) {
+    const fromApp = WINES.filter(w => w.appellation === app && !appInName(w));
+    if (!fromApp.length) continue;
+    add('appellation-wine', `aw:${app}`, () => {
+      const w = pick(fromApp);
+      const country = geoOf(w.producer).country;
+      const elsewhere = WINES.filter(o => o.appellation !== app);
+      const wrong = distractors(w, [
+        elsewhere.filter(o => geoOf(o.producer).country === country),
+        elsewhere
+      ], 3, wineLabel);
+      if (!wrong) return null;
+      return question({
+        kicker: 'Appellations',
+        prompt: `Which of these wines comes from ${app}?`,
+        explain: `<mark>${escapeHtml(wineLabel(w))}</mark> is ${article(app)} ${escapeHtml(app)} wine.`,
+        focus: w.producer
+      }, { label: wineLabel(w), producer: w.producer },
+         wrong.map(o => ({ label: `${wineLabel(o)}`, producer: o.producer })));
+    });
+  }
+
+  // Whose pin is this? Wrong options are nearby producers.
+  for (const p of producers) {
+    add('map-pin', `mp:${p}`, () => {
+      const near = producers.filter(o => o !== p)
+        .sort((a, b) => distanceKm(geoOf(p), geoOf(a)) - distanceKm(geoOf(p), geoOf(b)))
+        .slice(0, 6);
+      const wrong = distractors(p, [near]);
+      if (!wrong) return null;
+      return question({
+        kicker: 'On the map',
+        prompt: 'Whose pin is this?',
+        mapFirst: p,
+        explain: `That's <mark>${escapeHtml(p)}</mark>, in ${escapeHtml(placeLabel(geoOf(p), true))}.`,
+        focus: p
+      }, { label: p, producer: p }, wrong.map(o => ({ label: o, producer: o })));
+    });
+  }
+
+  // Fill in the blank, from tagged facts in the notes
+  const villagesAndPlaces = uniq([
+    ...producers.flatMap(p => [geoOf(p).village, geoOf(p).subregion, geoOf(p).region]),
+    ...appellations
+  ].filter(Boolean));
+  for (const f of FACTS) {
+    add('fact', `f:${f.producer}|${f.wine || ''}|${f.answer}`, () => {
+      let wrong;
+      if (f.kind === 'year') wrong = yearDistractors(f.answer);
+      else if (f.kind === 'number') wrong = numberDistractors(f.answer);
+      else {
+        const sameKind = FACTS.filter(o => o.kind === f.kind).map(o => o.answer);
+        const extra = f.kind === 'grape' ? allGrapes : f.kind === 'place' ? villagesAndPlaces : [];
+        wrong = distractors(f.answer, [sameKind, extra]);
+      }
+      if (!wrong) return null;
+      return question({
+        kicker: f.wine ? `${f.producer} · ${f.wine}` : f.producer,
+        prompt: 'Fill in the blank',
+        context: f.blanked,
+        explain: `<span class="source">${f.revealed}</span>`,
+        focus: f.producer
+      }, { label: f.answer }, wrong.map(x => ({ label: x })));
+    });
+  }
+
+  // Which producer is this? (their paragraph, with names hidden)
+  for (const p of producers.filter(p => geoOf(p).about)) {
+    add('about-producer', `ab:${p}`, () => {
+      const geo = geoOf(p);
+      const names = [p, ...WINES.filter(w => w.producer === p).map(w => w.wine)];
+      const others = producers.filter(o => o !== p);
+      const wrong = distractors(p, [sameCountry(p, others), others]);
+      if (!wrong) return null;
+      return question({
+        kicker: 'Who am I?',
+        prompt: 'Which producer is this?',
+        context: redact(clueFrom(geo.about), names),
+        explain: `It's <mark>${escapeHtml(p)}</mark>, in ${escapeHtml(placeLabel(geo, true))}.
+          <span class="source">${escapeHtml(stripFacts(geo.about))}</span>`,
+        focus: p
+      }, { label: p, producer: p }, wrong.map(o => ({ label: o, producer: o })));
+    });
+  }
+
+  // Which wine is this? (its note, with names hidden; siblings make good wrong options)
+  for (const w of WINES.filter(w => w.note)) {
+    add('note-wine', `wn:${w.producer}|${w.wine}`, () => {
+      const siblings = WINES.filter(o => o.producer === w.producer && o !== w);
+      const others = WINES.filter(o => o.producer !== w.producer);
+      const wrong = distractors(w, [
+        siblings,
+        others.filter(o => o.type === w.type && geoOf(o.producer).country === geoOf(w.producer).country),
+        others.filter(o => o.type === w.type),
+        others
+      ], 3, wineLabel);
+      if (!wrong) return null;
+      const names = [w.producer, ...WINES.filter(o => o.producer === w.producer).map(o => o.wine)];
+      return question({
+        kicker: 'What am I?',
+        prompt: 'Which wine is this?',
+        context: redact(clueFrom(w.note), names),
+        explain: `It's <mark>${escapeHtml(wineLabel(w))}</mark>.
+          <span class="source">${escapeHtml(stripFacts(w.note))}</span>`,
+        focus: w.producer
+      }, { label: wineLabel(w), producer: w.producer },
+         wrong.map(o => ({ label: wineLabel(o), producer: o.producer })));
+    });
+  }
+
+  return C;
+}
+
+/* ---------- Progress (spaced repetition) ---------- */
+
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+  catch { return {}; }
+}
+
+function saveProgress(progress) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(progress)); } catch { /* private mode */ }
+}
+
+function record(id, correct) {
+  const progress = loadProgress();
+  const p = progress[id] || { box: 0, right: 0, wrong: 0 };
+  p.box = correct ? Math.min(p.box + 1, MAX_BOX) : 0;
+  correct ? p.right++ : p.wrong++;
+  p.last = Date.now();
+  progress[id] = p;
+  saveProgress(progress);
+}
+
+function weightOf(id, progress) {
+  const p = progress[id];
+  if (!p) return BOX_WEIGHTS[0];
+  let w = BOX_WEIGHTS[p.box];
+  if (Date.now() - p.last < 10 * 60 * 1000) w *= 0.2;   // just asked: give it a rest
+  return w;
+}
+
+function drawRound() {
+  const progress = loadProgress();
+  let pool = [...CANDIDATES];
+  const perType = {};
+  const round = [];
+  while (round.length < QUESTIONS_PER_ROUND && pool.length) {
+    pool = pool.filter(c => (perType[c.type] || 0) < MAX_PER_TYPE);
+    if (!pool.length) break;
+    const total = pool.reduce((s, c) => s + weightOf(c.id, progress), 0);
+    let r = Math.random() * total;
+    const c = pool.find(c => (r -= weightOf(c.id, progress)) <= 0) || pool[pool.length - 1];
+    pool = pool.filter(x => x !== c);
+    const q = c.build();
+    if (!q) continue;
+    perType[c.type] = (perType[c.type] || 0) + 1;
+    round.push({ ...q, id: c.id });
+  }
+  return round;
+}
+
+/* ---------- Maps ---------- */
+
+let activeMap = null;
+
+function showMap(el, pins, { labels = true } = {}) {
+  if (activeMap) { activeMap.remove(); activeMap = null; }
+  const map = L.map(el, { zoomControl: false, attributionControl: true, worldCopyJump: true });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key={key}', {
+    key: CARTO_API_KEY,
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  const points = pins.map(({ producer, other }) => {
+    const geo = geoOf(producer);
+    const marker = L.marker([geo.lat, geo.lng], {
+      icon: L.divIcon({ className: '', html: `<div class="pin${other ? ' other' : ''}"></div>`, iconSize: [16, 16], iconAnchor: [8, 8] })
+    }).addTo(map);
+    if (labels) marker.bindTooltip(escapeHtml(producer), { permanent: true, direction: 'top', offset: [0, -8], className: 'pin-label' });
+    return [geo.lat, geo.lng];
+  });
+
+  if (points.length > 1) map.fitBounds(points, { padding: [40, 40], maxZoom: 7 });
+  else map.setView(points[0], 7);
+  setTimeout(() => map.invalidateSize(), 0);
+  activeMap = map;
+}
+
+/* ---------- Screens ---------- */
+
+const app = document.getElementById('app');
+let round = [];
+let results = [];
+let current = 0;
+
+function startRound() {
+  round = drawRound();
+  results = [];
+  current = 0;
+  if (!round.length) {
+    app.innerHTML = '<div class="loading">No questions available yet.</div>';
+    return;
+  }
+  showQuestion();
+}
+
+function progressBar() {
+  return `<div class="progress">${round.map((_, i) => {
+    const cls = i < results.length ? (results[i] ? 'right' : 'wrong') : i === current ? 'current' : '';
+    return `<span class="${cls}"></span>`;
+  }).join('')}</div>`;
+}
+
+function showQuestion() {
+  const q = round[current];
+  window.scrollTo(0, 0);
+  app.innerHTML = `
+    ${progressBar()}
+    <div class="q-kicker">${escapeHtml(q.kicker)}</div>
+    <h2 class="q-prompt">${escapeHtml(q.prompt)}</h2>
+    ${q.context ? `<div class="q-context">${q.context}</div>` : ''}
+    ${q.mapFirst ? '<div class="q-map" id="q-map"></div>' : ''}
+    <div class="options">
+      ${q.options.map((o, i) => `
+        <button class="option" data-i="${i}"><span>${escapeHtml(o.label)}</span><span class="mark"></span></button>
+      `).join('')}
+    </div>
+    <div id="feedback"></div>`;
+
+  if (q.mapFirst) showMap(document.getElementById('q-map'), [{ producer: q.mapFirst }], { labels: false });
+
+  app.querySelectorAll('.option').forEach(btn =>
+    btn.addEventListener('click', () => answer(parseInt(btn.dataset.i, 10))));
+}
+
+function answer(chosen) {
+  const q = round[current];
+  const correct = chosen === q.answer;
+  results.push(correct);
+  record(q.id, correct);
+
+  app.querySelectorAll('.option').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.answer) { btn.classList.add('correct'); btn.querySelector('.mark').textContent = '✓'; }
+    else if (i === chosen) { btn.classList.add('wrong'); btn.querySelector('.mark').textContent = '✗'; }
+    else btn.classList.add('dim');
+  });
+  app.querySelector('.progress').outerHTML = progressBar();
+
+  // Map: the right answer, plus the wrong pick if it was a producer
+  const pins = [{ producer: q.focus }];
+  const wrongPick = q.options[chosen].producer;
+  if (!correct && wrongPick && wrongPick !== q.focus) pins.push({ producer: wrongPick, other: true });
+
+  const last = current === round.length - 1;
+  document.getElementById('feedback').innerHTML = `
+    <div class="feedback">
+      <div class="verdict ${correct ? 'good' : 'bad'}">${correct ? 'Correct' : 'Not quite'}</div>
+      <div class="explain">${q.explain}</div>
+      <div class="fb-map" id="fb-map"></div>
+      <button class="primary" id="next">${last ? 'See results' : 'Next question'}</button>
+    </div>`;
+  showMap(document.getElementById('fb-map'), pins);
+  document.getElementById('next').addEventListener('click', () => {
+    if (last) showSummary(); else { current++; showQuestion(); }
+  });
+  document.getElementById('feedback').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showSummary() {
+  if (activeMap) { activeMap.remove(); activeMap = null; }
+  window.scrollTo(0, 0);
+  const score = results.filter(Boolean).length;
+  const progress = loadProgress();
+  const learned = CANDIDATES.filter(c => (progress[c.id]?.box || 0) >= 3).length;
+  const seen = CANDIDATES.filter(c => progress[c.id]).length;
+  const pct = Math.round(100 * learned / CANDIDATES.length);
+
+  app.innerHTML = `
+    ${progressBar()}
+    <div class="q-kicker">Round complete</div>
+    <div class="score">${score}<small> / ${round.length}</small></div>
+    <ul class="review">
+      ${round.map((q, i) => `
+        <li>
+          <span class="tick ${results[i] ? 'good' : 'bad'}">${results[i] ? '✓' : '✗'}</span>
+          <span>${escapeHtml(q.prompt === 'Fill in the blank' ? q.kicker : q.prompt)}
+            <span class="answer">— ${escapeHtml(q.options[q.answer].label)}</span></span>
+        </li>`).join('')}
+    </ul>
+    <div class="mastery">
+      Well learned: ${learned} of ${CANDIDATES.length} questions (${pct}%) · seen ${seen}
+      <div class="mastery-bar"><span style="width:${pct}%"></span></div>
+      A question counts as well learned after three correct answers in a row.
+    </div>
+    <button class="primary" id="again">Another round</button>
+    <button class="text-button" id="reset">Reset progress</button>`;
+
+  document.getElementById('again').addEventListener('click', startRound);
+  const reset = document.getElementById('reset');
+  reset.addEventListener('click', () => {
+    if (!reset.classList.contains('armed')) {
+      reset.classList.add('armed');
+      reset.textContent = 'Tap again to erase all progress';
+      return;
+    }
+    saveProgress({});
+    showSummary();
+  });
+}
+
+/* ---------- Load data ---------- */
+
+Promise.all([
+  fetch('producers.json').then(r => r.json()),
+  new Promise((resolve, reject) => {
+    Papa.parse('cellar.csv', {
+      download: true, header: true, skipEmptyLines: true,
+      complete: results => resolve(results.data), error: reject
+    });
+  })
+]).then(([producers, rows]) => {
+  PRODUCERS = producers;
+
+  const byKey = new Map();
+  for (const r of rows) {
+    const raw = r.Producer?.trim();
+    if (!raw || !PRODUCERS[raw]) continue;
+    const producer = MERGE[raw] || raw;
+    const key = `${producer}|${r.Wine}`;
+    if (byKey.has(key)) continue;
+    byKey.set(key, {
+      producer,
+      wine: r.Wine.trim(),
+      type: r.Type?.trim(),
+      grapes: (r.Grapes || '').split(' / ').map(g => g.trim()).filter(Boolean),
+      appellation: r.Appellation?.trim(),
+      note: PRODUCERS[raw].wines?.[r.Wine.trim()] || PRODUCERS[producer].wines?.[r.Wine.trim()]
+    });
+  }
+  WINES = [...byKey.values()];
+  GRAPE_WORDS = new Set(WINES.flatMap(w => w.grapes).flatMap(g => g.split(/\s+/)).map(norm));
+  FACTS = extractFacts();
+  CANDIDATES = buildCandidates();
+  startRound();
+}).catch(err => {
+  app.innerHTML = '<div class="loading">Could not load the cellar — serve via a local web server.</div>';
+  console.error(err);
+});
+</script>
+</body>
+</html>

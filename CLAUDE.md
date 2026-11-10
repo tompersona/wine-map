@@ -12,7 +12,7 @@ Then open http://localhost:8000. The CSV must be served over HTTP — opening `i
 
 ## Architecture
 
-This is a single-file app: all HTML, CSS, and JavaScript live in `index.html`. There is no build step, bundler, or package manager.
+There are two self-contained pages, each with its own HTML, CSS and JavaScript and no build step, bundler or package manager: `index.html` (the map) and `quiz.html` (the quiz, linked from the sidebar). Both read the same `cellar.csv` and `producers.json`.
 
 **Data source:** `cellar.csv` — columns are `Producer, Wine, Vintage, Quantity, Format_cl, Type, Grapes, Appellation` (Vintage is `NV` for non-vintage; grapes are separated by ` / `). `Appellation` is where the wine comes from (AOC/DOC/AVA/GI), which can differ from the producer's location in `producers.json`; it is shown beside the grapes unless the wine's name already contains it. Parsed at runtime by PapaParse.
 
@@ -25,3 +25,5 @@ This is a single-file app: all HTML, CSS, and JavaScript live in `index.html`. T
 **Sidebar:** Populated dynamically after CSV load — producer count, wine count, bottle count, and a country breakdown sorted by bottle count.
 
 **Special case:** "Rhys" and "Rhys Vineyards" are merged into a single map pin in `render()`.
+
+**Quiz:** `quiz.html` builds every possible question from the data in `buildCandidates()`. Each question type has a stable id prefix, e.g. `pr:Penfolds` or `f:<producer>|<wine>|<answer>`. Wrong options come from similar items (same region, country, type or grape). Tagged facts become fill-in-the-blank questions; years and numbers get made-up nearby values. Progress is stored per question in `localStorage` (`cellarQuiz.v1`) as Leitner-style boxes, and each round of 5 is weighted towards weak or unseen questions, with at most 2 of any one type.

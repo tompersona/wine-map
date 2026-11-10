@@ -88,6 +88,18 @@
     font-size: 15px;
   }
 
+  .quiz-link {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .quiz-link:hover { color: var(--accent-soft); }
+
   /* Stats */
   .stats {
     display: grid;
@@ -623,6 +635,7 @@
   <div class="masthead">
 <h1>The <em>Cellar</em></h1>
     <div class="subtitle">A geography of bottles, kept against time.</div>
+    <a class="quiz-link" href="quiz.html">Test yourself &rarr;</a>
   </div>
 
   <div class="stats" id="stats">
